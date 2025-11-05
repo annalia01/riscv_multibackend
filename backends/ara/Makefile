@@ -18,3 +18,10 @@ verilator:
 verilate:
 	@echo "[ARA] make verilate"
 	cd $(ARA_DIR)/hardware && make verilate
+checkout:
+        @echo "[ARA] make checkout"
+        cd $(ARA_DIR)/hardware && make checkout
+apply-patches:
+        @echo "[ARA] make apply-patches"
+        cd $(ARA_DIR)/hardware && make verilate
+

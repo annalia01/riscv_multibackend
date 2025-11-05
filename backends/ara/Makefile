@@ -25,3 +25,11 @@ apply-patches:
         @echo "[ARA] make apply-patches"
         cd $(ARA_DIR)/hardware && make verilate
 
+app:
+	@if [ -z "$(KERNEL)" ]; then \
+		echo "[ARA][ERROR] Please specify a kernel, e.g. make app KERNEL=fmatmul_2"; \
+		exit 1; \
+	fi
+	@echo "[ARA] Building kernel $(KERNEL)..."
+	cd $(ARA_DIR)/apps && \
+	make APPS_DIR=$(abspath $(SELF_DIR)/../../kernel) bin/$(KERNEL)

@@ -49,3 +49,7 @@ Once Spike is installed, all applications can be compiled and executed from the 
 For the gem5 backend setup, go to the backends/gem5/ directory and follow the installation instructions provided there.
 Once gem5 is installed, all applications can be compiled and executed from the root directory of the project.
 
+## VERILATOR SETUP 
+
+For the verilator backend setup, go to the backends/ara/ directory and follow the installation instructions provided there.
+Once verilator set up is finished, all applications can be compiled and executed from the root directory of the project.

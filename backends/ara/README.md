@@ -45,4 +45,7 @@ make apply-patches
 ### Compile hardware
 
 #Only compile the hardware without running the simulation.
+
+```bash
 make verilate
+```

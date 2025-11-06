@@ -1,5 +1,5 @@
 CC          := riscv64-unknown-elf-gcc
-SPIKE_BIN   := ../../install/riscv-isa-sim/bin/spike
+SPIKE_BIN   := riscv-isa-sim/build/spike
 PK          := $(HOME)/RISC-V/rv64/pk/riscv64-unknown-elf/bin/pk
 
 KERNEL      ?= fmatmul       

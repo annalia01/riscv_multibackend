@@ -1,6 +1,7 @@
 # ===== backends/ara/Makefile (minimale) =====
 SELF_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 ARA_DIR  := $(SELF_DIR)/ara
+DATA_DIR := $(abspath $(SELF_DIR)/../../data)
 
 .PHONY: git-submodules toolchain-llvm verilator
 
@@ -32,7 +33,7 @@ app:
 	fi
 	@echo "[ARA] Building kernel $(KERNEL)..."
 	cd $(ARA_DIR)/apps && \
-	make APPS_DIR=$(abspath $(SELF_DIR)/../../kernel) bin/$(KERNEL)
+	make APPS_DIR=$(abspath $(SELF_DIR)/../../kernel) DATA_DIR=$(DATA_DIR) bin/$(KERNEL)
 
 run:
 	@if [ -z "$(KERNEL)" ]; then \

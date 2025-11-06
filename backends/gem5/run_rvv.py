@@ -98,7 +98,11 @@ system.mem_ctrl.port = system.membus.mem_side_ports
 # ==================== WORKLOAD ====================
 
 
-binary = "/home/annalia/DoE/apps/spmv/main.elf"
+binary = os.environ.get("GEM5_ELF")
+if not binary or not os.path.isfile(binary):
+    raise FileNotFoundError(f"[gem5] Missing or invalid GEM5_ELF path: {binary}")
+
+print(f"[gem5] ELF: {binary}")
 
 # Imposta workload SE
 system.workload = SEWorkload.init_compatible(binary)

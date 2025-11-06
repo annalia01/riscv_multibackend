@@ -18,14 +18,13 @@
 
 #include "../inc/iconv2d.h"
 
-#include "../../common/printf.h"
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 
 
 void iconv2d_3x3_uint8(uint8_t *o, uint8_t *i, uint8_t *f, int64_t R, int64_t C,
                  int64_t F) {
-printf("entro in iconv2d\n");
+
   // We work on 4 rows of the output matrix at once
   uint8_t block_size_o = 3;
   // We work on block_size_o + F - 1 rows of the input matrix at once
@@ -44,7 +43,6 @@ printf("entro in iconv2d\n");
   asm volatile("lbu %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t0) : "r"(ldf));
   asm volatile("lbu %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t1) : "r"(ldf));
   asm volatile("lbu %1, (%0);" : "+&r"(f_), "=&r"(t2));
-printf("fatte le prime load\n");
   f_ = f + 1;
   // Fetch the middle column of the filter, and start calculating its
   // contributions on the output rows To do so, slide down the input rows by one
@@ -59,9 +57,7 @@ printf("fatte le prime load\n");
 
 for (int32_t r = 0; r < R; r += block_size_o) {
 
-
-printf("entro nel ciclo for\n");
-    // Fetch C + F - 1 elements (padding included)
+  // Fetch C + F - 1 elements (padding included)
   uint8_t ldo = C ;
   uint8_t *i___=i+r*(C+F-1);
   uint8_t *i_col = i + r*(C+F-1) + 1;

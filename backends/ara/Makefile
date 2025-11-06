@@ -19,11 +19,11 @@ verilate:
 	@echo "[ARA] make verilate"
 	cd $(ARA_DIR)/hardware && make verilate
 checkout:
-        @echo "[ARA] make checkout"
-        cd $(ARA_DIR)/hardware && make checkout
+	@echo "[ARA] make checkout"
+	cd $(ARA_DIR)/hardware && make checkout
 apply-patches:
-        @echo "[ARA] make apply-patches"
-        cd $(ARA_DIR)/hardware && make verilate
+	@echo "[ARA] make apply-patches"
+	cd $(ARA_DIR)/hardware && make verilate
 
 app:
 	@if [ -z "$(KERNEL)" ]; then \
@@ -33,3 +33,11 @@ app:
 	@echo "[ARA] Building kernel $(KERNEL)..."
 	cd $(ARA_DIR)/apps && \
 	make APPS_DIR=$(abspath $(SELF_DIR)/../../kernel) bin/$(KERNEL)
+
+run:
+	@if [ -z "$(KERNEL)" ]; then \
+		echo "[ARA][ERROR] Please specify a kernel, e.g. make run KERNEL=fmatmul_2"; \
+		exit 1; \
+	fi
+	@echo "[ARA] Running kernel $(KERNEL) on Verilator..."
+	cd $(ARA_DIR)/hardware && app=$(KERNEL) make simv

@@ -1,6 +1,6 @@
-# riscv_multibackend
+# RISC-V MULTI-BACKEND
 
-his repository provides a modular simulation environment for evaluating the performance of RISC-V vector code across different backends.  
+This repository provides a modular simulation environment for evaluating the performance of RISC-V vector code across different backends.  
 It integrates multiple simulation targets — functional, architectural, and RTL — enabling seamless compilation and execution of the same benchmark on each backend.
 
 The goal of this framework is to **analyze the performance, scalability, and correctness of RISC-V Vector (RVV) applications** under different simulation levels.  
@@ -38,3 +38,9 @@ mkdir build && cd build
 make -j$(nproc)
 make install
 ```
+
+## SPIKE SETUP
+
+For the Spike backend setup, go to the `backends/spike/` directory and follow the installation instructions provided there.  
+Once Spike is installed, all applications can be compiled and executed from the root directory of the project.
+

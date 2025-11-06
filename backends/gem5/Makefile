@@ -2,7 +2,7 @@
 
 # ==== Toolchain e percorsi ====
 CC          := riscv64-unknown-elf-gcc
-GEM5_BIN    := /build/RISCV/gem5.opt
+GEM5_BIN    := /gem5/build/RISCV/gem5.opt
 RUN_SCRIPT  := run_rvv.py
 
 # ==== Parametri variabili ====

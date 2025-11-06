@@ -1,1 +1,40 @@
 # riscv_multibackend
+
+his repository provides a modular simulation environment for evaluating the performance of RISC-V vector code across different backends.  
+It integrates multiple simulation targets — functional, architectural, and RTL — enabling seamless compilation and execution of the same benchmark on each backend.
+
+The goal of this framework is to **analyze the performance, scalability, and correctness of RISC-V Vector (RVV) applications** under different simulation levels.  
+Each backend (e.g., Spike, Gem5, Ara) can be independently built and configured, allowing flexible experimentation and comparison.
+
+## RISC-V GNU Toolchain
+
+To build the applications that will be executed on Spike and gem5, a RISC-V GNU toolchain is required.
+
+```bash
+#Download sources directory
+export DOWNLOAD_DIR=$(pwd)/downloads
+
+#Installation directory
+export INSTALL_DIR=$HOME/RISC-V/rv64
+
+#Create directories
+mkdir -p $DOWNLOAD_DIR
+mkdir -p $INSTALL_DIR
+
+#Clone the RISC-V GNU toolchain
+cd $DOWNLOAD_DIR
+git clone https://github.com/riscv/riscv-gnu-toolchain.git --depth 1
+cd riscv-gnu-toolchain
+
+#Initialize required submodules
+git submodule update --init --recursive --depth 1 binutils gcc glibc dejagnu newlib gdb
+
+#Build and install
+mkdir build && cd build
+../configure --prefix=$INSTALL_DIR/gnu-toolchain \
+             --with-arch=rv64gcv_zicsr_zifencei \
+             --with-abi=lp64
+
+make -j$(nproc)
+make install
+```

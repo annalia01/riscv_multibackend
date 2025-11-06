@@ -8,8 +8,8 @@ MARCH       := rv64gcv_zicsr_zicntr
 ABI         := lp64
 
 KERNEL_DIR  := ../../kernel/$(KERNEL)
-COMMON_DIR  := ../../common
-DATA_DIR    := ../../data
+COMMON_DIR  := ../../kernel/common
+DATA_DIR    := ../../data/$(KERNEL)
 
 TARGET      := $(KERNEL_DIR)/main.elf
 SRCS        := $(wildcard $(KERNEL_DIR)/*.c) \

@@ -38,18 +38,26 @@ mkdir build && cd build
 make -j$(nproc)
 make install
 ```
+After the installation is complete, export the toolchain binaries to your system `PATH` so they can be accessed from anywhere:
+
+```bash
+export PATH=$HOME/RISC-V/rv64/gnu-toolchain/bin:$PATH
+```
 
 ## SPIKE SETUP
 
-For the Spike backend setup, go to the `backends/spike/` directory and follow the installation instructions provided there.  
+For the Spike backend setup, go to the `backends/spike/` directory and follow the installation instructions provided there. 
+All commands must be executed within that directory.
 Once Spike is installed, all applications can be compiled and executed from the root directory of the project.
 
 ## GEM5 SETUP
 
 For the gem5 backend setup, go to the backends/gem5/ directory and follow the installation instructions provided there.
+All commands must be executed within that directory.
 Once gem5 is installed, all applications can be compiled and executed from the root directory of the project.
 
 ## VERILATOR SETUP 
 
 For the verilator backend setup, go to the backends/ara/ directory and follow the installation instructions provided there.
+All commands must be executed within that directory.
 Once verilator set up is finished, all applications can be compiled and executed from the root directory of the project.

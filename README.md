@@ -44,3 +44,8 @@ make install
 For the Spike backend setup, go to the `backends/spike/` directory and follow the installation instructions provided there.  
 Once Spike is installed, all applications can be compiled and executed from the root directory of the project.
 
+## GEM5 SETUP
+
+For the gem5 backend setup, go to the backends/gem5/ directory and follow the installation instructions provided there.
+Once gem5 is installed, all applications can be compiled and executed from the root directory of the project.
+

@@ -1,6 +1,6 @@
 
 #include <stdint.h>
-#include "../../common/runtime.h"
+#include "runtime.h"
 
 int32_t M __attribute__((aligned(32))) = 3;
 int32_t N __attribute__((aligned(32))) = 3;

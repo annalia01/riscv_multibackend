@@ -66,3 +66,20 @@ git submodule update --init --recursive
 For the verilator backend setup, go to the backends/ara/ directory and follow the installation instructions provided there.
 All commands must be executed within that directory.
 Once verilator set up is finished, all applications can be compiled and executed from the root directory of the project.
+
+## Build Applications
+
+In this directory, you can build applications for any backend and kernel using the following command:
+
+```bash
+make BACKEND=ara KERNEL=fmatmul_32 build
+
+
+You can chose the backend among ara, spike or gem5. For available kernels, check the contents of the kernel/ directory.
+
+## Run Applications
+
+To run an application, use:
+```bash
+make BACKEND=ara KERNEL=fmatmul_32 run
+```

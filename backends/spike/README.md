@@ -1,4 +1,4 @@
-# Installing Spike (RISC-V ISA Simulator)
+# Installing Spike 
 
 This guide explains how to manually install **Spike**, the RISC-V ISA simulator, including a **patched version** that supports configurable **VLEN** values for vector extension experiments.
 

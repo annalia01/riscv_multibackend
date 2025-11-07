@@ -73,7 +73,7 @@ In this directory, you can build applications for any backend and kernel using t
 
 ```bash
 make BACKEND=ara KERNEL=fmatmul_32 build
-
+```
 
 You can chose the backend among ara, spike or gem5. For available kernels, check the contents of the kernel/ directory.
 

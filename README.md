@@ -57,6 +57,11 @@ All commands must be executed within that directory.
 Once gem5 is installed, all applications can be compiled and executed from the root directory of the project.
 
 ## VERILATOR SETUP 
+Before using Ara, make sure to initialize all its submodules:
+
+```bash
+git submodule update --init --recursive
+```
 
 For the verilator backend setup, go to the backends/ara/ directory and follow the installation instructions provided there.
 All commands must be executed within that directory.

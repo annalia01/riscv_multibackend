@@ -57,3 +57,4 @@ make apply-patches
 ```bash
 make verilate
 ```
+you can specify the configuration to set VLEN

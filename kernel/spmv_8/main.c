@@ -20,15 +20,15 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "inc/spmv.h"
-#include "../common/runtime.h"
-#include "../common/util.h"
+#include "spmv.h"
+#include "runtime.h"
+#include "util.h"
 
 #ifdef SPIKEGEM
 #include <stdio.h>
 #define NR_LANES 8
 #else
-#include "../common/printf.h"
+#include "printf.h"
 #endif
 
 extern uint64_t R;

@@ -1,8 +1,9 @@
 
 #include <stdint.h>
-#include "../../common/runtime.h"
+#include "runtime.h"
+#ifdef SPIKEGEM
 #define NR_LANES 8
-// Definizione delle dimensioni delle matrici
+#endif
 uint64_t M = 32;
 uint64_t N = 32;
 uint64_t P = 32;

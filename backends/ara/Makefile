@@ -2,7 +2,7 @@ SELF_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 ARA_DIR  := $(SELF_DIR)/ara
 DATA_DIR := $(abspath $(SELF_DIR)/../../data)
 
-.PHONY: git-submodules toolchain-llvm verilator
+.PHONY: git-submodules toolchain-llvm verilator checkout apply-patches verilate app run
 
 git-submodules:
 	@echo "[ARA] make git-submodules"

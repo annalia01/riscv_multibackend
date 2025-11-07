@@ -4,7 +4,7 @@
 #ifdef SPIKEGEM
 #define NR_LANES 8
 #endif
-// Definizione delle dimensioni delle matrici
+
 uint64_t M = 32;
 uint64_t N = 32;
 uint64_t P = 32;
@@ -27,13 +27,11 @@ void init_dataset() {
     }
   }
 
-  // c inizialmente a zero
   for (uint64_t i = 0; i < M * P; ++i) {
     c[i] = 0.0;
     g[i] = 0.0;
   }
 
-  // g = a × b (matrici piane)
   for (uint64_t i = 0; i < M; ++i) {
     for (uint64_t j = 0; j < P; ++j) {
       for (uint64_t k = 0; k < N; ++k) {

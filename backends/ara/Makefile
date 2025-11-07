@@ -1,4 +1,3 @@
-# ===== backends/ara/Makefile (minimale) =====
 SELF_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 ARA_DIR  := $(SELF_DIR)/ara
 DATA_DIR := $(abspath $(SELF_DIR)/../../data)
@@ -48,7 +47,7 @@ app:
 
 run:
         @if [ -z "$(KERNEL)" ]; then \
-                echo "[ARA][ERROR] Please specify a kernel, e.g. make run KERNEL=fmatmul_2"; \
+                echo "[ARA][ERROR] Please specify a kernel, e.g. make run KERNEL=fmatmul_32"; \
                 exit 1; \
         fi
         @echo "[ARA] Running kernel $(KERNEL) with Verilator..."

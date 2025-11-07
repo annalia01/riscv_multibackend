@@ -17,9 +17,9 @@
 
 // Author: Chi Zhang, ETH Zurich <chizhang@iis.ee.ethz.ch>
 
-#include "../inc/spmv.h"
-#include "../../common/runtime.h"
-#include "../../common/util.h"
+#include "spmv.h"
+#include "runtime.h"
+#include "util.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -27,7 +27,7 @@
 #ifdef SPIKEGEM
 #include <stdio.h>
 #else 
-#include "../../common/printf.h"
+#include "printf.h"
 #endif
 
 

@@ -21,14 +21,14 @@
 
 #include <string.h>
 #include <stdint.h>
-#include "inc/fmatmul.h"
-#include "../common/runtime.h"
-#include "../common/util.h"
+#include "fmatmul.h"
+#include "runtime.h"
+#include "util.h"
 #ifdef SPIKEGEM
 #include <stdio.h>
 #define NR_LANES 4
 #else
-#include "../common/printf.h"
+#include "printf.h"
 #endif
 // Define Matrix dimensions:
 // C = AB with A=[MxN], B=[NxP], C=[MxP]

@@ -3,7 +3,7 @@
 This repository provides a modular simulation environment for evaluating the performance of RISC-V vector code across different backends.  
 It integrates multiple simulation targets — functional, architectural, and RTL — enabling seamless compilation and execution of the same benchmark on each backend.
 
-The goal of this framework is to **analyze the performance, scalability, and correctness of RISC-V Vector (RVV) applications** under different simulation levels.  
+The goal of this framework is to analyze the performance, scalability, and correctness of RISC-V Vector applications under different simulation levels.  
 Each backend (e.g., Spike, Gem5, Ara) can be independently built and configured, allowing flexible experimentation and comparison.
 
 ## RISC-V GNU Toolchain
@@ -76,7 +76,7 @@ make BACKEND=ara KERNEL=fmatmul_32 build
 ```
 
 You can chose the backend among ara, spike or gem5. For available kernels, check the contents of the kernel/ directory.
-
+If you have already built an application for Spike, you don’t need to rebuild it for Gem5, since they share the same RISC-V binary format.
 ## Run Applications
 
 To run an application, use:

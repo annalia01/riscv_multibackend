@@ -42,20 +42,20 @@ void iconv2d_3x3(int32_t *o, int32_t *i, int32_t *f, int64_t R, int64_t C,
   int32_t ldf = F << 2;
   int32_t *f_;
   f_ = f;
-  asm volatile("ld %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t0) : "r"(ldf));
-  asm volatile("ld %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t1) : "r"(ldf));
-  asm volatile("ld %1, (%0);" : "+&r"(f_), "=&r"(t2));
+  asm volatile("lw %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t0) : "r"(ldf));
+  asm volatile("lw %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t1) : "r"(ldf));
+  asm volatile("lw %1, (%0);" : "+&r"(f_), "=&r"(t2));
   f_ = f + 1;
   // Fetch the middle column of the filter, and start calculating its
   // contributions on the output rows To do so, slide down the input rows by one
-  asm volatile("ld %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t3) : "r"(ldf));
-  asm volatile("ld %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t4) : "r"(ldf));
-  asm volatile("ld %1, (%0);" : "+&r"(f_), "=&r"(t5));
+  asm volatile("lw %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t3) : "r"(ldf));
+  asm volatile("lw %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t4) : "r"(ldf));
+  asm volatile("lw %1, (%0);" : "+&r"(f_), "=&r"(t5));
   f_ = f + 2;
   // Repeat for the last filter column, and then store the output rows
-  asm volatile("ld %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t6) : "r"(ldf));
-  asm volatile("ld %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t7) : "r"(ldf));
-  asm volatile("ld %1, (%0);" : "+&r"(f_), "=&r"(t8));
+  asm volatile("lw %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t6) : "r"(ldf));
+  asm volatile("lw %1, (%0); add %0, %0, %2" : "+&r"(f_), "=&r"(t7) : "r"(ldf));
+  asm volatile("lw %1, (%0);" : "+&r"(f_), "=&r"(t8));
 
 for (int32_t r = 0; r < R; r += block_size_o) {
 

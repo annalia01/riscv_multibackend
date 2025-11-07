@@ -1,3 +1,11 @@
+## Get started
+
+Make sure you clone this repository recursively to get all the necessary submodules:
+
+```bash
+make git-submodules
+```
+
 ## Toolchain
 
 Ara requires a RISC-V LLVM toolchain capable of understanding the vector extension, version 1.0.

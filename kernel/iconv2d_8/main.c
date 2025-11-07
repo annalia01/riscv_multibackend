@@ -20,15 +20,15 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "inc/iconv2d.h"
-#include "../common/runtime.h"
+#include "iconv2d.h"
+#include "runtime.h"
 
-#include "../common/util.h"
+#include "util.h"
 #ifdef SPIKEGEM
 #define NR_LANES 8
 #include  <stdio.h>
 #else
-#include "../common/printf.h"
+#include "printf.h"
 #endif
 
 void init_dataset();

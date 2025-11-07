@@ -1,6 +1,6 @@
 
 #include <stdint.h>
-#include "../../common/runtime.h"
+#include "runtime.h"
 #define NR_LANES 8
 // Definizione delle dimensioni delle matrici
 uint64_t M = 32;

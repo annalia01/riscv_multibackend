@@ -94,7 +94,7 @@ int main() {
          performance, utilization, NR_LANES);
 
   printf("Verifying ...\n");
-  if ((M, N, rows, cols, VALUES, col_idx, IN_VEC, OUT_VEC)) {
+  if (sspmv_verify(M, N, rows, cols, VALUES, col_idx, IN_VEC, OUT_VEC)) {
     return 1;
   } else {
     printf("Passed.\n");

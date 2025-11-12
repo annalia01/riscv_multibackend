@@ -8,7 +8,7 @@ int32_t N = 2;
 int32_t rows = 3;
 int32_t cols = 8;
 
-float VALUES[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
+float VALUES[rows * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
     // riga 0
     1.0, 2.0, 3.0, 4.0,
     // riga 1
@@ -17,7 +17,7 @@ float VALUES[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section
     9.0, 10.0, 11.0, 12.0
 };
 
-int32_t col_idx[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
+int32_t col_idx[rows * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
     // riga 0
     0, 2, 1, 3,
     // riga 1
@@ -26,5 +26,5 @@ int32_t col_idx[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), sect
     0, 3, 1, 2
 };
 
-float IN_VEC[COLS] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {1, 2, 3, 4, 5, 6, 7, 8};
-float OUT_VEC[ROWS] __attribute__((aligned(32 * NR_LANES), section(".l2")));
+float IN_VEC[cols] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {1, 2, 3, 4, 5, 6, 7, 8};
+float OUT_VEC[rows] __attribute__((aligned(32 * NR_LANES), section(".l2")));

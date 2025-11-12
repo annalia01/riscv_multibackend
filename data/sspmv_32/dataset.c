@@ -1,12 +1,14 @@
-#include <stdio.h>
 #include <stdint.h>
+#ifdef SPIKEGEM 
+#define NR_LANES 8
+#endif
 
-#define M 4
-#define N 2
-#define ROWS 3
-#define COLS 8
+int32_t M 4
+int32_t N 2
+int32_t ROWS 3
+int32_t COLS 8
 
-float VALUES[ROWS * (COLS/M) * N] = {
+float VALUES[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
     // riga 0
     1.0, 2.0, 3.0, 4.0,
     // riga 1
@@ -15,7 +17,7 @@ float VALUES[ROWS * (COLS/M) * N] = {
     9.0, 10.0, 11.0, 12.0
 };
 
-int32_t col_idx[ROWS * (COLS/M) * N] = {
+int32_t col_idx[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
     // riga 0
     0, 2, 1, 3,
     // riga 1
@@ -24,5 +26,5 @@ int32_t col_idx[ROWS * (COLS/M) * N] = {
     0, 3, 1, 2
 };
 
-float IN_VEC[COLS] = {1, 2, 3, 4, 5, 6, 7, 8};
-float OUT_VEC[ROWS];
+float IN_VEC[COLS] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {1, 2, 3, 4, 5, 6, 7, 8};
+float OUT_VEC[ROWS] __attribute__((aligned(32 * NR_LANES), section(".l2")));

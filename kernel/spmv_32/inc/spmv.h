@@ -1,4 +1,3 @@
-
 // Copyright 2022 ETH Zurich and University of Bologna.
 //
 // SPDX-License-Identifier: Apache-2.0
@@ -17,16 +16,11 @@
 
 // Author: Chi Zhang, ETH Zurich <chizhang@iis.ee.ethz.ch>
 
-#ifndef _SPMV_H
-#define _SPMV_H
-
+#ifndef _SSPMV_H
+#define _SSPMV_H
 #include <stdint.h>
-
-void spmv_csr_idx32(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
-                    float *CSR_DATA, float *IN_VEC, float *OUT_VEC);
-
-int spmv_verify(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
-                float *CSR_DATA, float *IN_VEC, float *OUT_VEC);
-                
-
+void sspmv_32(int32_t M, int32_t N, int32_t rows, int32_t cols, float * VALUES, int32_t * col_idx, float * IN_VEC, float * OUT_VEC);
+int sspmv_verify(int32_t M, int32_t N, int32_t rows, int32_t cols,
+                 float * VALUES, int32_t * col_idx,
+                 float * IN_VEC, float *OUT_VEC);
 #endif

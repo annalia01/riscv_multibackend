@@ -20,15 +20,15 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "inc/spmv.h"
-#include "../common/runtime.h"
-#include "../common/util.h"
+#include "spmv.h"
+#include "runtime.h"
+#include "util.h"
 
 #ifdef SPIKEGEM
 #include <stdio.h>
 #define NR_LANES 8
 #else 
-#include "../common/printf.h"
+#include "printf.h"
 #endif 
 
 extern int32_t cols;
@@ -94,8 +94,7 @@ int main() {
          performance, utilization, NR_LANES);
 
   printf("Verifying ...\n");
-  if (spmv_verify(R, CSR_PROW, CSR_INDEX, CSR_DATA, CSR_IN_VECTOR,
-                  CSR_OUT_VECTOR)) {
+  if ((M, N, rows, cols, VALUES, col_idx, IN_VEC, OUT_VEC)) {
     return 1;
   } else {
     printf("Passed.\n");

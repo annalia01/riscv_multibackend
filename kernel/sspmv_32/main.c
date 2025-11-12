@@ -31,21 +31,15 @@
 #include "../common/printf.h"
 #endif 
 
-extern uint32_t R;
-extern uint32_t C;
-extern uint32_t NZ;
+extern int32_t cols;
+extern int32_t rows;
+extern int32_t M;
+extern int32_t N;
 
-extern int32_t CSR_PROW[]
-    __attribute__((aligned(4 * NR_LANES), section(".l2")));
-extern int32_t CSR_INDEX[]
-    __attribute__((aligned(4 * NR_LANES), section(".l2")));
-extern float CSR_DATA[] __attribute__((aligned(4 * NR_LANES), section(".l2")));
-extern float CSR_IN_VECTOR[]
-    __attribute__((aligned(4 * NR_LANES), section(".l2")));
-extern float CSR_OUT_VECTOR[]
-    __attribute__((aligned(4 * NR_LANES), section(".l2")));
-
-
+extern float VALUES __attribute__((aligned(32 * NR_LANES), section(".l2")));
+extern int32_t col_idx[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
+extern float IN_VEC[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
+extern float OUT_VEC[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 
 static inline uint64_t read_minstret(void) {
     uint64_t value;
@@ -81,8 +75,7 @@ int main() {
   uint64_t start_minstret = read_minstret();
   #endif 
   start_timer();
-  spmv_csr_idx32(R, CSR_PROW, CSR_INDEX, CSR_DATA, CSR_IN_VECTOR,
-                 CSR_OUT_VECTOR);
+  void sspmv_32(M, N, rows, cols, VALUES, col_idx, IN_VEC);
   stop_timer();
   #ifdef SPIKEGEM
   uint64_t end_minstret = read_minstret();

@@ -1,4 +1,3 @@
-
 // Copyright 2022 ETH Zurich and University of Bologna.
 //
 // SPDX-License-Identifier: Apache-2.0
@@ -36,7 +35,7 @@ extern int32_t rows;
 extern int32_t M;
 extern int32_t N;
 
-extern float VALUES __attribute__((aligned(32 * NR_LANES), section(".l2")));
+extern float VALUES[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 extern int32_t col_idx[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 extern float IN_VEC[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 extern float OUT_VEC[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
@@ -55,17 +54,14 @@ int main() {
   printf("\n");
   printf("\n");
   
-  double density = ((double)NZ) / (R * C);
-  double nz_per_row = ((double)NZ) / R;
 
   printf("\n");
   printf(
       "-------------------------------------------------------------------\n");
   printf(
       "Calculating a (%d x %d) x %d sparse matrix vector multiplication...\n",
-      R, C, C);
-  printf("CSR format with %d nozeros: %d density, %d nonzeros per row \n", NZ,
-         density, nz_per_row);
+      rows, cols);
+ 
   printf(
       "-------------------------------------------------------------------\n");
   printf("\n");
@@ -75,7 +71,7 @@ int main() {
   uint64_t start_minstret = read_minstret();
   #endif 
   start_timer();
-  void sspmv_32(M, N, rows, cols, VALUES, col_idx, IN_VEC);
+  sspmv_32(M, N, rows, cols, VALUES, col_idx, IN_VEC, OUT_VEC);
   stop_timer();
   #ifdef SPIKEGEM
   uint64_t end_minstret = read_minstret();
@@ -83,15 +79,12 @@ int main() {
   #endif
   // Metrics
   int64_t runtime = get_timer();
-  float performance = 2.0 * NZ / runtime;
-  float utilization = 100 * performance / (2.0 * NR_LANES);
     
   #ifdef SPIKEGEM
   printf("Instructions retired (CSR minstret): %lu\n", delta_minstret);
   #endif
   printf("The execution took %d cycles.\n", runtime);
-  printf("The performance is %f FLOP/cycle (%f%% utilization) at %d lanes.\n",
-         performance, utilization, NR_LANES);
+
 
   printf("Verifying ...\n");
   if (sspmv_verify(M, N, rows, cols, VALUES, col_idx, IN_VEC, OUT_VEC)) {

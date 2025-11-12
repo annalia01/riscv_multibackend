@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "spmv.h"
+#include "sspmv.h"
 #include "runtime.h"
 #include "util.h"
 

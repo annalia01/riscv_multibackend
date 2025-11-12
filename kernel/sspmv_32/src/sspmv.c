@@ -29,35 +29,68 @@
 #include "printf.h"
 #endif
 
-void sspmv_32(int32_t M, int32_t N, int32_t rows, int32_t cols, const float * VALUES, const int32_t * col_idx, const float * IN_VEC, float * OUT_VEC) {
-int32_t nnzpr = (cols/M)*N;
-asm volatile("vsetvli zero, %0, e32, m2, ta, ma" :: "r"(nnzpr));
-int32_t ldi = nnzpr << 2;
-float *i_=VALUES;
-  
-for(int i=0; i<rows; i++) {
-asm volatile("vle32.v v0,  (%0); add %0, %0, %1" : "+&r"(i_) : "r"(ldi));
-asm volatile("vmv.v.i v4,0"); 
-for(int j=0; j<(cols/M)*N; j++) {
-int32_t block_id=j/N;
-int32_t s1=col_idx[i*nnzpr+j];
-s1+=block_id*M;
-int32_t offset = s1 << 2;
-asm volatile("vmv.v.x v12, %0" :: "r"(offset));
-asm volatile("vloxei32.v v8, (%0), v12" :: "r"(IN_VEC));
-asm volatile("vfmul.vv v16, v8, v0"); // moltiplicazione 
-asm volatile("vfredsum.vs v4, v16, v4"); // riduzione
-}
-float result;
-asm volatile("vfmv.f.s %0, v16" : "=f"(result));
-OUT_VEC[i] = result;
+void sspmv_32(int32_t M, int32_t N, int32_t rows, int32_t cols,
+              float *VALUES, int32_t *col_idx,
+              float *IN_VEC, float *OUT_VEC) {
 
-}
+    int32_t nnzpr = (cols / M) * N;
+    int32_t ldi = nnzpr << 2;
+    float *i_ = VALUES;
+
+    for (int i = 0; i < rows; i++) {
+
+        // --- azzera accumulatore scalare ---
+        float acc = 0.0f;
+
+        int remaining = nnzpr;
+        int offset = 0;
+
+        while (remaining > 0) {
+            int vl;
+            asm volatile("vsetvli %0, %1, e32, m1, ta, ma"
+                         : "=r"(vl) : "r"(remaining) : "memory");
+
+            // === carica blocco di VALUES ===
+            asm volatile("vle32.v v0, (%0)" :: "r"(i_ + offset) : "memory");
+
+            // === prepara indici byte ===
+            static int32_t s1_vec[256] __attribute__((aligned(64)));
+            for (int j = 0; j < vl; j++) {
+                int32_t block_id = (offset + j) / N;
+                int32_t s1 = col_idx[i * nnzpr + offset + j];
+                s1 += block_id * M;
+                s1_vec[j] = s1 << 2; // offset in byte
+            }
+
+            // === gather e moltiplicazione ===
+            asm volatile("vle32.v v12, (%0)" :: "r"(s1_vec) : "memory");
+            asm volatile("vluxei32.v v8, (%0), v12" :: "r"(IN_VEC) : "memory");
+            asm volatile("vfmul.vv v16, v8, v0" ::: "memory");
+
+            // === riduzione del CHUNK ===
+            asm volatile("vmv.v.i v4, 0" ::: "memory");
+            asm volatile("vfredsum.vs v4, v16, v4" ::: "memory");
+
+            // estrai risultato parziale e accumula
+            float part;
+            asm volatile("vfmv.f.s %0, v4" : "=f"(part));
+            acc += part;
+
+            offset += vl;
+            remaining -= vl;
+        }
+
+        // --- fine riga ---
+        OUT_VEC[i] = acc;
+
+        // avanza il puntatore VALUES alla prossima riga
+        asm volatile("add %0, %0, %1" : "+&r"(i_) : "r"(ldi));
+    }
 }
 
 int sspmv_verify(int32_t M, int32_t N, int32_t rows, int32_t cols,
-                 const float *VALUES, const int32_t *col_idx,
-                 const float *IN_VEC, const float *OUT_VEC) {
+                 float * VALUES, int32_t * col_idx,
+                 float * IN_VEC, float * OUT_VEC) {
 
   int32_t nnzpr = (cols / M) * N; // numero di non-zero per riga
 
@@ -82,5 +115,3 @@ int sspmv_verify(int32_t M, int32_t N, int32_t rows, int32_t cols,
 
   return 0; // tutto corretto
 }
-
-

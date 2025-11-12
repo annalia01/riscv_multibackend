@@ -5,8 +5,8 @@
 
 int32_t M = 4;
 int32_t N = 2;
-int32_t ROWS = 3;
-int32_t COLS = 8;
+int32_t rows = 3;
+int32_t cols = 8;
 
 float VALUES[ROWS * (COLS/M) * N] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
     // riga 0

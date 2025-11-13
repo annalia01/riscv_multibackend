@@ -2,8 +2,8 @@
  * Vector kernel implemented for the thesis work of <YOUR NAME>.
  *
  * The algorithm is based on the S2 scheme described in:
- *<Titopoulos; Alexandridis; Peltekis; Nicopoulos; Dimitrakopoulos>,
- "<Optimizing Structured-Sparse Matrix Multiplication in RISC-V Vector Processors>", <2025>.
+ * <Titopoulos; Alexandridis; Peltekis; Nicopoulos; Dimitrakopoulos>,
+ * <Optimizing Structured-Sparse Matrix Multiplication in RISC-V Vector Processors>, <2025>.
  *
  * In this implementation, non-zero values are stored following
  * the layout used in algorithm S3, while the computational flow

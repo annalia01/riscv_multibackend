@@ -1,4 +1,3 @@
-
 // Copyright 2022 ETH Zurich and University of Bologna.
 //
 // SPDX-License-Identifier: Apache-2.0
@@ -61,19 +60,18 @@ int main() {
   printf(
       "-------------------------------------------------------------------\n");
   printf(
-      "Calculating a (%d x %d) x %d sparse matrix vector multiplication...\n",
-      rows, cols);
+      "Calculating");
  
   printf(
       "-------------------------------------------------------------------\n");
   printf("\n");
 
-  printf("calculating ... \n");
+  
   #ifdef SPIKEGEM
   uint64_t start_minstret = read_minstret();
   #endif 
   start_timer();
-  sspgemm_32(M, N, rows, cols, VALUES, col_idx, IN_VEC, B, cols_b, C)
+  sspgemm_32(M, N, rows, cols, VALUES, col_idx, B, cols_b, C);
   stop_timer();
   #ifdef SPIKEGEM
   uint64_t end_minstret = read_minstret();

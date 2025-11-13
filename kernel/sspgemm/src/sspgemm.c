@@ -30,14 +30,7 @@
 #endif
 
 
-void sspgemm_32(
-    int32_t M, int32_t N,
-    int32_t rows, int32_t cols,
-    float *VALUES, int32_t *col_idx,
-    float *IN_VEC,
-    float *B, int32_t cols_b,   
-    float *C                
-) {
+void sspgemm_32(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *IN_VEC, float *B, int32_t cols_b, float *C) {
 
     int32_t nnzpr = (cols / M) * N;   
     asm volatile("vsetvli zero, %0, e32, m2, ta, ma" :: "r"(cols_b));

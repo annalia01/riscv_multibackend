@@ -60,27 +60,37 @@ void sspgemm_32(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES,
     }
 }
 
-void sspgemm_verify(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *B, int32_t cols_b, float *C) {
-    int32_t nnzpr = (cols / M) * N;  
-    for (int i = 0; i < rows; i++) {
-        for (int k = 0; k < cols_b; k++)
-            C[i * cols_b + k] = 0.0f;
+int sspmv_verify_matrix(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *B, int32_t cols_b, float *OUT) 
+{
+    int32_t nnzpr = (cols / M) * N; ì
+    for (int32_t i = 0; i < rows; i++) {
 
-        for (int j = 0; j < nnzpr; j++) {
+        for (int32_t k = 0; k < cols_b; k++) {
 
-            int32_t block_id = j / N;
+            float golden = 0.0f;
+            for (int32_t j = 0; j < nnzpr; j++) {
 
-            int32_t s1 = col_idx[i * nnzpr + j];
-            s1 += block_id * M;
+                int32_t block_id = j / N;
 
-            float a_ij = VALUES[i * nnzpr + j];
+                int32_t s1 = col_idx[i * nnzpr + j];
+                s1 += block_id * M;
 
-            float *b_row = &B[s1 * cols_b];
+                float a_ij = VALUES[i * nnzpr + j];
 
-            for (int k = 0; k < cols_b; k++) {
-                C[i * cols_b + k] += a_ij * b_row[k];
+                golden += a_ij * B[s1 * cols_b + k];
+            }
+
+            float res = OUT[i * cols_b + k];
+
+            if (fabsf(golden - res) > 1e-3f) {
+                printf("Wrong value at C[%d,%d]: result=%f, golden=%f\n",
+                       i, k, res, golden);
+                return i * cols_b + k; 
             }
         }
     }
+
+    return 0; 
 }
+
 

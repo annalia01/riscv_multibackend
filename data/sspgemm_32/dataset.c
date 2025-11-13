@@ -3,7 +3,7 @@
 #define NR_LANES 8
 #endif
 
-float VALUES[16 * 8] __attribute__((aligned(32 * NR_LANES))) = {
+
 int32_t M      = 8;    
 int32_t N      = 4;
 int32_t rows   = 16;
@@ -13,7 +13,7 @@ int32_t cols_b = 32;
 int32_t nnzpr = 8;     
 
 
-
+float VALUES[16 * 8] __attribute__((aligned(32 * NR_LANES))) = {
     // riga 0
      1,  2,  3,  4,   5,  6,  7,  8,
     // riga 1

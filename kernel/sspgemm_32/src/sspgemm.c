@@ -30,39 +30,55 @@
 #endif
 
 
-void sspgemm_32(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *IN_VEC, float *B, int32_t cols_b, float *C) {
+void sspgemm_32(int32_t M, int32_t N,
+                int32_t rows, int32_t cols,
+                float *VALUES, int32_t *col_idx,
+                float *B, int32_t cols_b,
+                float *C) {
 
-    int32_t nnzpr = (cols / M) * N;   
-    asm volatile("vsetvli zero, %0, e32, m2, ta, ma" :: "r"(cols_b));
+    int32_t nnzpr = (cols / M) * N;  
 
-    for (int i = 0; i < rows; i++) {
+    for (int32_t i = 0; i < rows; i++) {
 
-        // v2 = 0
-        asm volatile("vmv.v.i v2, 0");
+        float *c_row = &C[i * cols_b];
 
-        for (int j = 0; j < nnzpr; j++) {
+      
+        for (int32_t k = 0; k < cols_b; ) {
 
-            int32_t block_id = j / N;
-            int32_t s1 = col_idx[i * nnzpr + j];
+            int32_t remaining = cols_b - k;
+            int32_t vl;
 
-            s1 += block_id * M;
+            asm volatile("vsetvli %0, %1, e32, m1, ta, ma"
+                         : "=r"(vl)
+                         : "r"(remaining));
 
-            float *b_ptr = &B[s1 * cols_b];
-            asm volatile("vle32.v v1, (%0)" :: "r"(b_ptr));
+            asm volatile("vmv.v.i v0, 0");
 
-            float s0 = VALUES[i * nnzpr + j];
+            for (int32_t j = 0; j < nnzpr; j++) {
 
-            asm volatile("vfmacc.vf v2, %0, v1" :: "f"(s0));
+                int32_t block_id = j / N;
+                int32_t s1 = col_idx[i * nnzpr + j];
+                s1 += block_id * M; 
+
+                float *b_ptr = &B[s1 * cols_b + k];  
+
+                asm volatile("vle32.v v4, (%0)" :: "r"(b_ptr));
+
+                float s0 = VALUES[i * nnzpr + j];
+
+                asm volatile("vfmacc.vf v0, %0, v4" :: "f"(s0));
+            }
+
+            float *c_ptr = c_row + k;
+            asm volatile("vse32.v v0, (%0)" :: "r"(c_ptr));
+            k += vl;
         }
-
-        float *c_ptr = &C[i * cols_b];
-        asm volatile("vse32.v v2, (%0)" :: "r"(c_ptr));
     }
 }
 
-int sspmv_verify_matrix(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *B, int32_t cols_b, float *OUT) 
+int sspgemm_verify_matrix(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *B, int32_t cols_b, float *OUT) 
 {
-    int32_t nnzpr = (cols / M) * N; ì
+    int32_t nnzpr = (cols / M) * N; 
     for (int32_t i = 0; i < rows; i++) {
 
         for (int32_t k = 0; k < cols_b; k++) {
@@ -92,5 +108,3 @@ int sspmv_verify_matrix(int32_t M, int32_t N, int32_t rows, int32_t cols, float 
 
     return 0; 
 }
-
-

@@ -16,7 +16,7 @@
 
 // Author: Chi Zhang, ETH Zurich <chizhang@iis.ee.ethz.ch>
 
-#include "sspmv.h"
+#include "sspgemm.h"
 #include "runtime.h"
 #include "util.h"
 #include <math.h>

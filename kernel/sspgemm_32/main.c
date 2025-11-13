@@ -50,7 +50,7 @@ static inline uint64_t read_minstret(void) {
 int main() {
   printf("\n");
   printf("==========\n");
-  printf("=  SpMV  =\n");
+  printf("=  SSpGEMM =\n");
   printf("==========\n");
   printf("\n");
   printf("\n");

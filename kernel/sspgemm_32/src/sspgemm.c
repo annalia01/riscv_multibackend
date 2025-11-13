@@ -57,11 +57,11 @@ void sspgemm_32(int32_t M, int32_t N,
 
                 float *b_ptr = &B[s1 * cols_b + k];  
 
-                asm volatile("vle32.v v4, (%0)" :: "r"(b_ptr));
+                asm volatile("vle32.v v8, (%0)" :: "r"(b_ptr));
 
                 float s0 = VALUES[i * nnzpr + j];
 
-                asm volatile("vfmacc.vf v0, %0, v4" :: "f"(s0));
+                asm volatile("vfmacc.vf v0, %0, v8" :: "f"(s0));
             }
 
             float *c_ptr = c_row + k;

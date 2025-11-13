@@ -16,8 +16,8 @@
 
 // Author: Chi Zhang, ETH Zurich <chizhang@iis.ee.ethz.ch>
 
-#ifndef _SSPMV_H
-#define _SSPMV_H
+#ifndef _SSPGEMM_H
+#define _SSPGEMM_H
 #include <stdint.h>
 
 void sspgemm_32(int32_t M, int32_t N, int32_t rows, int32_t cols, float *VALUES, int32_t *col_idx, float *IN_VEC, float *B, int32_t cols_b, float *C);

@@ -35,10 +35,10 @@ extern int32_t rows;
 extern int32_t M;
 extern int32_t N;
 
-extern float VALUES[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
-extern int32_t col_idx[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
-extern float IN_VEC[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
-extern float OUT_VEC[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
+extern float VALUES[] __attribute__((aligned(32 * NR_LANES)));
+extern int32_t col_idx[] __attribute__((aligned(32 * NR_LANES)));
+extern float IN_VEC[] __attribute__((aligned(32 * NR_LANES)));
+extern float OUT_VEC[] __attribute__((aligned(32 * NR_LANES)));
 
 static inline uint64_t read_minstret(void) {
     uint64_t value;

@@ -9,23 +9,14 @@ uint8_t rows = 8;
 uint8_t cols = 32;
 
 uint8_t VALUES[128] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
-    // riga 0
     1, 2, 3, 4,  5, 6, 7, 8,
-    // riga 1
     9, 10, 11, 12,  13, 14, 15, 16,
-    // riga 2
     17, 18, 19, 20,  21, 22, 23, 24,
-    // riga 3
     25, 26, 27, 28,  29, 30, 31, 32,
-    // riga 4
     33, 34, 35, 36,  37, 38, 39, 40,
-    // riga 5
     41, 42, 43, 44,  45, 46, 47, 48,
-    // riga 6
     49, 50, 51, 52,  53, 54, 55, 56,
-    // riga 7
     57, 58, 59, 60,  61, 62, 63, 64,
-    // altre 8 righe (tot 16 valori per riga)
     65, 66, 67, 68,  69, 70, 71, 72,
     73, 74, 75, 76,  77, 78, 79, 80,
     81, 82, 83, 84,  85, 86, 87, 88,
@@ -37,7 +28,6 @@ uint8_t VALUES[128] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
 };
 
 uint8_t col_idx[128] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
-    // pattern pseudo-casuale, sempre < cols (32)
     0, 2, 4, 6,   1, 3, 5, 7,
     2, 4, 6, 8,   3, 5, 7, 9,
     4, 6, 8, 10,  5, 7, 9, 11,

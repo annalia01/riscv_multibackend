@@ -1,5 +1,5 @@
 /*
- * Vector kernel implemented for the thesis work of <YOUR NAME>.
+ * Vector kernel implemented for the thesis work of <Annalia Ruggiero>.
  *
  * The algorithm is based on the S2 scheme described in:
  * <Titopoulos; Alexandridis; Peltekis; Nicopoulos; Dimitrakopoulos>,

@@ -1,3 +1,9 @@
 [submodule "backends/ara/ara"]
 	path = backends/ara/ara
 	url = https://github.com/pulp-platform/ara.git
+[submodule "benchmarks/rivec"]
+	path = benchmarks/rivec
+	url = https://github.com/RALC88/riscv-vectorized-benchmark-suite.git
+[submodule "benchmarks/openblas"]
+	path = benchmarks/openblas
+	url = https://github.com/OpenMathLib/OpenBLAS.git

@@ -1,4 +1,3 @@
-
 import os
 import m5
 from m5.objects import (
@@ -57,7 +56,6 @@ system.clk_domain.voltage_domain = VoltageDomain()
 system.mem_mode = "timing"
 system.mem_ranges = [AddrRange("512MB")]
 
-
 system.cpu = MinorCPU()
 
 # ===== RVV CONFIGURATION =====
@@ -97,7 +95,6 @@ system.mem_ctrl.port = system.membus.mem_side_ports
 
 # ==================== WORKLOAD ====================
 
-
 binary = os.environ.get("GEM5_ELF")
 if not binary or not os.path.isfile(binary):
     raise FileNotFoundError(f"[gem5] Missing or invalid GEM5_ELF path: {binary}")
@@ -107,8 +104,18 @@ print(f"[gem5] ELF: {binary}")
 # Imposta workload SE
 system.workload = SEWorkload.init_compatible(binary)
 
+# Leggi gli argomenti dalla variabile d'ambiente ARGS
+args_str = os.environ.get("ARGS", "")
+if args_str:
+    args_list = args_str.split()
+else:
+    args_list = []
+
+print(f"[gem5] ARGS: {args_list}")
+
 process = Process()
-process.cmd = [binary]
+process.executable = binary
+process.cmd = [binary] + args_list
 system.cpu.workload = process
 
 # Crea i thread DOPO aver assegnato l’ISA

@@ -19,16 +19,16 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "inc/spmv.h"
-#include "../common/runtime.h"
-#include "../common/util.h"
+#include "spmv.h"
+#include "runtime.h"
+#include "util.h"
 
 #ifdef SPIKEGEM
 #include <stdio.h>
 #define NR_LANES 8
-#else 
-#include "../common/printf.h"
-#endif 
+#else
+#include "printf.h"
+#endif
 
 extern uint32_t R;
 extern uint32_t C;
@@ -59,7 +59,7 @@ int main() {
   printf("==========\n");
   printf("\n");
   printf("\n");
-  
+
   double density = ((double)NZ) / (R * C);
   double nz_per_row = ((double)NZ) / R;
 
@@ -78,7 +78,7 @@ int main() {
   printf("calculating ... \n");
   #ifdef SPIKEGEM
   uint64_t start_minstret = read_minstret();
-  #endif 
+  #endif
   start_timer();
   spmv_csr_idx32(R, CSR_PROW, CSR_INDEX, CSR_DATA, CSR_IN_VECTOR,
                  CSR_OUT_VECTOR);
@@ -91,7 +91,7 @@ int main() {
   int64_t runtime = get_timer();
   float performance = 2.0 * NZ / runtime;
   float utilization = 100 * performance / (2.0 * NR_LANES);
-    
+
   #ifdef SPIKEGEM
   printf("Instructions retired (CSR minstret): %lu\n", delta_minstret);
   #endif

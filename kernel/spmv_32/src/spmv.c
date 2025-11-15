@@ -1,4 +1,3 @@
-
 // Copyright 2022 ETH Zurich and University of Bologna.
 //
 // SPDX-License-Identifier: Apache-2.0
@@ -26,7 +25,7 @@
 #include <string.h>
 #ifdef SPIKEGEM
 #include <stdio.h>
-#else 
+#else
 #include "printf.h"
 #endif
 
@@ -89,7 +88,7 @@ int spmv_verify(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
     for (int32_t j = 0; j < len; ++j) {
       int32_t idx = index[j] / DATA_BYTE;
       golden = golden + data[j] * IN_VEC[idx];
-      
+
     }
     if ((int32_t)golden != (int32_t)res) {
       printf("Sorry, wrong value! at index %d, result = %f, golden = %f \n", i,

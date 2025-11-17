@@ -20,26 +20,26 @@
 #include "dotproduct.h"
 
 
-int32_t dotp_v32b(int32_t *a, int32_t *b, uint64_t avl) {
+int8_t dotp_v8b(int8_t *a, int8_t *b, uint64_t avl) {
 
 
   size_t orig_avl = avl;
   size_t vl;
-  asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(avl));
+  asm volatile("vsetvli %0, %1, e8, m8, ta, ma" : "=r"(vl) : "r"(avl));
 
-  int32_t red;
+  int8_t red;
 
-  int32_t *a_ = (int32_t *)a;
-  int32_t *b_ = (int32_t *)b;
+  int8_t *a_ = (int8_t *)a;
+  int8_t *b_ = (int8_t *)b;
 
   // Clean the accumulator
   asm volatile("vmv.s.x v0, zero");
   // Stripmine and accumulate a partial reduced vector
   for (; avl > 0; avl -= vl) {
-    asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(avl));
+    asm volatile("vsetvli %0, %1, e8, m8, ta, ma" : "=r"(vl) : "r"(avl));
     // Load chunk a and b
-    asm volatile("vle32.v v8,  (%0)" ::"r"(a_));
-    asm volatile("vle32.v v16, (%0)" ::"r"(b_));
+    asm volatile("vle8.v v8,  (%0)" ::"r"(a_));
+    asm volatile("vle8.v v16, (%0)" ::"r"(b_));
     // Multiply and accumulate
     if (avl == orig_avl) {
       asm volatile("vmul.vv v24, v8, v16");
@@ -60,8 +60,8 @@ int32_t dotp_v32b(int32_t *a, int32_t *b, uint64_t avl) {
 }
 
 
-int32_t dotp_s32b(int32_t *a, int32_t *b, uint64_t avl) {
-  int32_t acc0, acc1, acc2, acc3, acc4, acc5, acc6, acc7;
+int8_t dotp_s8b(int8_t *a, int8_t *b, uint64_t avl) {
+  int8_t acc0, acc1, acc2, acc3, acc4, acc5, acc6, acc7;
 
   acc0 = 0;
   acc1 = 0;
@@ -95,4 +95,3 @@ int32_t dotp_s32b(int32_t *a, int32_t *b, uint64_t avl) {
 
   return acc0;
 }
-

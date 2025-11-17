@@ -32,30 +32,27 @@
 #else
 #include "printf.h"
 #endif
-
-// Run also the scalar benchmark
-#define SCALAR 0
-
-// Check the vector results against golden vectors
-#define CHECK 0
-
 inline int64_t read_minstret(void) {
     int64_t value;
     asm volatile ("csrr %0, instret"
                   : "=r"(value));
     return value;
 }
+// Run also the scalar benchmark
+#define SCALAR 0
+
+// Check the vector results against golden vectors
+#define CHECK 0
 
 // Vector size (Byte)
 extern uint64_t vsize;
 // Vectors for benchmarks
-extern int32_t v32a[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
-extern int32_t v32b[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 
+extern int8_t v8a[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
+extern int8_t v8b[] __attribute__((aligned(32 * NR_LANES), section(".l2")));
 // Output vectors
 
-extern int32_t res32_v, res32_s;
-
+extern int8_t res8_v, res8_s;
 
 int main() {
   printf("\n");
@@ -68,14 +65,14 @@ int main() {
   int64_t runtime_s, runtime_v;
 
 
-  for (uint64_t avl = 8; avl <= (vsize >> 2); avl *= 8) {
+  for (uint64_t avl = 8; avl <= (vsize >> 0); avl *= 8) {
     // Dotp
-    printf("Calulating 32b dotp with vectors with length = %lu\n", avl);
+    printf("Calulating 8b dotp with vectors with length = %lu\n", avl);
     #ifdef SPIKEGEM
     int64_t start_minstret = read_minstret();
     #endif
     start_timer();
-    res32_v = dotp_v32b(v32a, v32b, avl);
+    res8_v = dotp_v8b(v8a, v8b, avl);
     stop_timer();
     #ifdef SPIKEGEM
     int64_t end_minstret = read_minstret();
@@ -86,17 +83,16 @@ int main() {
     #ifdef SPIKEGEM
     printf("Instructions retired (CSR minstret): %lu\n", delta_minstret);
     #endif
-
     if (SCALAR) {
       start_timer();
-      res32_s = dotp_s32b(v32a, v32b, avl);
+      res8_s = dotp_s8b(v8a, v8b, avl);
       stop_timer();
       runtime_s = get_timer();
       printf("Scalar runtime: %ld\n", runtime_s);
 
       if (CHECK) {
-        if (res32_v != res32_s) {
-          printf("Error: v = %ld, g = %ld\n", res32_v, res32_s);
+        if (res8_v != res8_s) {
+          printf("Error: v = %ld, g = %ld\n", res8_v, res8_s);
           return -1;
         }
       }

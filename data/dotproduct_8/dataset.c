@@ -2,8 +2,8 @@
 #ifdef SPIKEGEM
 #define NR_LANES 8
 #endif
-uint64_t vsize = 2048;
-int32_t v32a[512] __attribute__((aligned(32 * NR_LANES), section(".l2")))= {
+uint64_t vsize = 512;
+int8_t v8a[512] __attribute__((aligned(32 * NR_LANES), section(".l2")))= {
  6164,  8901,  9390,  5984,  1568,  5011,  1673,  5242,
  2184,  2375,  8084,  5834,  6475,  9056,  3889,  4319,
  3142,  7247,  7168,  3511,  4630,  1288,  3404,  6175,
@@ -62,7 +62,7 @@ int32_t v32a[512] __attribute__((aligned(32 * NR_LANES), section(".l2")))= {
 };
 
 
-int32_t v32b[512] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
+int8_t v8b[512] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
  1844,  9955,  7802,   840,  4633,  3774,  2273,  8120,
   499,  3755,  7672,  4430,  1577,  2188,  8400,  5055,
  2511,  2111,  5999,  7411,  7744,  8440,  5201,  3111,
@@ -112,4 +112,4 @@ int32_t v32b[512] __attribute__((aligned(32 * NR_LANES), section(".l2"))) = {
  9111,  7000,  8888,  5000,  8333,  3444,  7111,  4222
 };
 
-int32_t res32_v, res32_s;
+int8_t res8_v, res8_s;

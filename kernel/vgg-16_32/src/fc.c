@@ -12,7 +12,7 @@ void fc(int32_t *mat, int32_t *vec, int rows, int cols, int32_t *out_vec)
         while(c < cols) {
 
             size_t vl;
-            asm volatile("vsetvli %0, %1, e32, m8"
+            asm volatile("vsetvli %0, %1, e32, m8, ta, ma"
                         : "=r"(vl)
                         : "r"(cols - c));
 

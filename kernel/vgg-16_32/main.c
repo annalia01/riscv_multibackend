@@ -1,5 +1,6 @@
 #ifdef SPIKEGEM
 #include <stdio.h>
+#define NR_LANES 8
 #else
 #include "printf.h"
 #endif

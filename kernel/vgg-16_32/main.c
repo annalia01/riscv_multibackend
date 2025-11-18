@@ -64,10 +64,10 @@ void print_vector_float(const float *v, int N, const char *name) {
 int main() {
 
     // ====== BUFFER LAYER ======
-    static int32_t conv_out[CONV_OUT_H * CONV_OUT_W];
-    static int32_t pool_out[POOL_OUT_H * POOL_OUT_W];
-    static int32_t fc_out[FC_OUT];
-    static float softmax_out[FC_OUT];
+    static int32_t conv_out[CONV_OUT_H * CONV_OUT_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t pool_out[POOL_OUT_H * POOL_OUT_W]  __attribute__((aligned(32*NR_LANES)));
+    static int32_t fc_out[FC_OUT]  __attribute__((aligned(32*NR_LANES)));
+    static float softmax_out[FC_OUT]  __attribute__((aligned(32*NR_LANES)));
 
 
     // ========================================================
@@ -144,4 +144,3 @@ int main() {
 
     return 0;
 }
-

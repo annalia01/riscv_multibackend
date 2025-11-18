@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-// ===== DIMENSIONI DEL MODELLO =====
 #define IN_H 16
 #define IN_W 16
 
@@ -15,9 +14,6 @@
 #define FC_OUT 10
 
 
-// ===============================
-//     IMMAGINE DI INPUT 16×16
-// ===============================
 int32_t input_image[IN_H * IN_W] = {
     1,2,3,4,5,6,7,8, 9,10,11,12,13,14,15,16,
     2,3,4,5,6,7,8,9, 10,11,12,13,14,15,16,1,
@@ -39,9 +35,7 @@ int32_t input_image[IN_H * IN_W] = {
 };
 
 
-// ===============================
-//   FILTRO CONV 3x3
-// ===============================
+
 int32_t filter_3x3[9] = {
     1, 0, -1,
     1, 0, -1,
@@ -49,14 +43,10 @@ int32_t filter_3x3[9] = {
 };
 
 
-// ===============================
-//     FC weights 49×10 + bias
-// ===============================
 int32_t fc_weights[FLAT_SIZE * FC_OUT];
 int32_t fc_bias[FC_OUT];
 
 
-// Inizializzazione automatica weights/bias
 __attribute__((constructor))
 static void init_fc()
 {

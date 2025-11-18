@@ -9,7 +9,7 @@ void relu(int32_t *data, int N) {
 
         size_t vl;
 
-        asm volatile("vsetvli %0, %1, e32, m8"
+        asm volatile("vsetvli %0, %1, e32, m8, ta, ma"
                      : "=r"(vl)
                      : "r"(N - idx));
 

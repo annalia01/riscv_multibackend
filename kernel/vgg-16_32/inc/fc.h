@@ -1,5 +1,3 @@
-// relu.h
-
 #ifndef FC_H
 #define FC_H
 

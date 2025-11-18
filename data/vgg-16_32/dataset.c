@@ -14,7 +14,7 @@
 #define FC_OUT 10
 
 
-int32_t input_image[IN_H * IN_W] = {
+int32_t input_image[IN_H * IN_W]  __attribute__((aligned(32*NR_LANES)))= {
     1,2,3,4,5,6,7,8, 9,10,11,12,13,14,15,16,
     2,3,4,5,6,7,8,9, 10,11,12,13,14,15,16,1,
     3,4,5,6,7,8,9,10, 11,12,13,14,15,16,1,2,
@@ -36,15 +36,15 @@ int32_t input_image[IN_H * IN_W] = {
 
 
 
-int32_t filter_3x3[9] = {
+int32_t filter_3x3[9]  __attribute__((aligned(32*NR_LANES)))= {
     1, 0, -1,
     1, 0, -1,
     1, 0, -1
 };
 
 
-int32_t fc_weights[FLAT_SIZE * FC_OUT];
-int32_t fc_bias[FC_OUT];
+int32_t fc_weights[FLAT_SIZE * FC_OUT]  __attribute__((aligned(32*NR_LANES)));
+int32_t fc_bias[FC_OUT]  __attribute__((aligned(32*NR_LANES)));
 
 
 __attribute__((constructor))

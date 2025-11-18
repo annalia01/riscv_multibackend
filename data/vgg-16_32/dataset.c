@@ -1,4 +1,7 @@
 #include <stdint.h>
+#ifdef SPIKEGEM
+#define NR_LANES 8
+#endif
 
 #define IN_H 16
 #define IN_W 16

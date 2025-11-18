@@ -96,10 +96,6 @@ static void exp_rvv(float *dst, const float *src, int N)
 }
 
 
-
-// ============================================================================
-// SOFTMAX RVV COMPLETO
-// ============================================================================
 void softmax_rvv(const float *input, float *output, int N)
 {
     float max_val, sum_val;
@@ -131,9 +127,7 @@ void softmax_rvv(const float *input, float *output, int N)
     asm volatile("vredmax.vs v8, v0, v0");
     asm volatile("vmv.x.s %0, v8" : "=r"(max_val));
 
-    // ------------------------------
-    // 2) subtract max + clamp
-    // ------------------------------
+
     remaining = N;
     p = input;
     float *tmp = output;
@@ -155,14 +149,8 @@ void softmax_rvv(const float *input, float *output, int N)
         remaining -= vl;
     }
 
-    // ------------------------------
-    // 3) EXP
-    // ------------------------------
     exp_rvv(output, output, N);
 
-    // ------------------------------
-    // 4) SUM
-    // ------------------------------
     remaining = N;
     const float *q = output;
 
@@ -186,9 +174,6 @@ void softmax_rvv(const float *input, float *output, int N)
     asm volatile("vredsum.vs v8, v0, v0");
     asm volatile("vmv.x.s %0, v8" : "=r"(sum_val));
 
-    // ------------------------------
-    // 5) DIVIDE
-    // ------------------------------
     remaining = N;
     float *outp = output;
 

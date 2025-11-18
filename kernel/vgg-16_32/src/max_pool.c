@@ -1,6 +1,10 @@
 #include <stdint.h>
 #include <stddef.h>
-
+#ifdef SPIKEGEM
+#include <stdio.h>
+#else
+#include "printf.h"
+#endif
 void maxpool2x2(const int32_t *in, int H, int W, int32_t *out)
 {
     int H_out = H / 2;
@@ -16,18 +20,19 @@ void maxpool2x2(const int32_t *in, int H, int W, int32_t *out)
         for (int c = 0; c < W_out; c++) {
 
 
-            const int32_t *p0 = row0 + 2 * c;     
-            const int32_t *p1 = row1 + 2 * c;     
+            const int32_t *p0 = row0 + 2 * c;
+            const int32_t *p1 = row1 + 2 * c;
 
             size_t vl;
 
-            asm volatile("vsetvli %0, %1, e32, m1"
+            asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                         : "=r"(vl)
                         : "r"(2));
 
             asm volatile("vle32.v v0, (%0)" :: "r"(p0));
             asm volatile("vle32.v v4, (%0)" :: "r"(p1));
             asm volatile("vmax.vv v8, v0, v4");
+            printf("...\n");
             asm volatile("vmv.v.i v12, 0");
             asm volatile("vredmax.vs v12, v8, v12");
 

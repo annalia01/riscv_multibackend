@@ -52,20 +52,20 @@ static void exp_rvv(float *dst, const float *src, int N)
     while (remaining > 0)
     {
         size_t vl;
-        asm volatile("vsetvli %0, %1, e32, m2"
+        asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                      : "=r"(vl) : "r"(remaining));
 
         asm volatile("vle32.v v0, (%0)" :: "r"(s));
 
         asm volatile("vfmul.vf v4, v0, %0" :: "f"(LOG2_E));
 
-        asm volatile("vfcvt.x.f.v v8, v4");   
-        asm volatile("vfcvt.f.x.v v12, v8");   
+        asm volatile("vfcvt.x.f.v v8, v4");
+        asm volatile("vfcvt.f.x.v v12, v8");
 
-       
+
         asm volatile("vfsub.vv v16, v4, v12");
 
-  
+
         asm volatile("vfmul.vf v20, v16, %0" :: "f"(255.0f));
         asm volatile("vfcvt.xu.f.v v24, v20");
 
@@ -77,13 +77,13 @@ static void exp_rvv(float *dst, const float *src, int N)
         asm volatile("vmv.v.i v16, 0");
         asm volatile("vmv.v.i v20, 0");
         asm volatile("vmv.v.i v24, 0");
-        asm volatile("vfmul.vf v4, v12, %0" :: "f"(LN2)); 
-        asm volatile("vfmul.vv v8, v4, v4");             
-        asm volatile("vfmul.vf v16, v8, %0" :: "f"(0.5f)); 
+        asm volatile("vfmul.vf v4, v12, %0" :: "f"(LN2));
+        asm volatile("vfmul.vv v8, v4, v4");
+        asm volatile("vfmul.vf v16, v8, %0" :: "f"(0.5f));
 
         asm volatile("vfadd.vf v20, v4, %0" :: "f"(1.0f));
 
-        asm volatile("vfadd.vv v24, v20, v16");             
+        asm volatile("vfadd.vv v24, v20, v16");
 
         asm volatile("vfmul.vv v0, v28, v24");
 
@@ -95,19 +95,15 @@ static void exp_rvv(float *dst, const float *src, int N)
     }
 }
 
-
 void softmax_rvv(const float *input, float *output, int N)
 {
     float max_val, sum_val;
 
-    // ------------------------------
-    // 1) MAX
-    // ------------------------------
     int remaining = N;
     const float *p = input;
     size_t vl;
 
-    asm volatile("vsetvli %0, %1, e32, m4"
+    asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                  : "=r"(vl) : "r"(remaining));
     asm volatile("vle32.v v0, (%0)" :: "r"(p));
 
@@ -115,7 +111,7 @@ void softmax_rvv(const float *input, float *output, int N)
     remaining -= vl;
 
     while (remaining > 0) {
-        asm volatile("vsetvli %0, %1, e32, m4"
+        asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                      : "=r"(vl) : "r"(remaining));
         asm volatile("vle32.v v4, (%0)" :: "r"(p));
         asm volatile("vmax.vv v0, v0, v4");
@@ -123,17 +119,16 @@ void softmax_rvv(const float *input, float *output, int N)
         remaining -= vl;
     }
 
-    asm volatile("vsetvli zero, %0, e32, m4" :: "r"(1));
+    asm volatile("vsetvli zero, %0, e32, m4, ta, ma" :: "r"(1));
     asm volatile("vredmax.vs v8, v0, v0");
     asm volatile("vmv.x.s %0, v8" : "=r"(max_val));
-
 
     remaining = N;
     p = input;
     float *tmp = output;
 
     while (remaining > 0) {
-        asm volatile("vsetvli %0, %1, e32, m4"
+        asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                      : "=r"(vl) : "r"(remaining));
 
         asm volatile("vle32.v v0, (%0)" :: "r"(p));
@@ -151,10 +146,11 @@ void softmax_rvv(const float *input, float *output, int N)
 
     exp_rvv(output, output, N);
 
+
     remaining = N;
     const float *q = output;
 
-    asm volatile("vsetvli %0, %1, e32, m4"
+    asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                  : "=r"(vl) : "r"(remaining));
     asm volatile("vle32.v v0, (%0)" :: "r"(q));
 
@@ -162,7 +158,7 @@ void softmax_rvv(const float *input, float *output, int N)
     remaining -= vl;
 
     while (remaining > 0) {
-        asm volatile("vsetvli %0, %1, e32, m4"
+        asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                      : "=r"(vl) : "r"(remaining));
         asm volatile("vle32.v v4, (%0)" :: "r"(q));
         asm volatile("vfadd.vv v0, v0, v4");
@@ -170,7 +166,7 @@ void softmax_rvv(const float *input, float *output, int N)
         remaining -= vl;
     }
 
-    asm volatile("vsetvli zero, %0, e32, m4" :: "r"(1));
+    asm volatile("vsetvli zero, %0, e32, m4, ta, ma" :: "r"(1));
     asm volatile("vredsum.vs v8, v0, v0");
     asm volatile("vmv.x.s %0, v8" : "=r"(sum_val));
 
@@ -178,7 +174,7 @@ void softmax_rvv(const float *input, float *output, int N)
     float *outp = output;
 
     while (remaining > 0) {
-        asm volatile("vsetvli %0, %1, e32, m4"
+        asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                      : "=r"(vl) : "r"(remaining));
 
         asm volatile("vle32.v v0, (%0)" :: "r"(outp));

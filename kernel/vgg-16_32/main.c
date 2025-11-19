@@ -1,6 +1,5 @@
 #ifdef SPIKEGEM
 #include <stdio.h>
-#define NR_LANES 8
 #else
 #include "printf.h"
 #endif
@@ -121,8 +120,7 @@ int main() {
     // 5) Convert to float for softmax
     // ========================================================
     float fc_out_f[FC_OUT];
-    for (int i = 0; i < FC_OUT; i++)
-        fc_out_f[i] = (float) fc_out[i];
+int32_to_float32_rvv(fc_out, fc_out_f, FC_OUT);
 
 
     // ========================================================

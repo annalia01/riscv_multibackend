@@ -33,7 +33,7 @@ void avgpool2x2(const int32_t *in, int H, int W, int32_t *out)
 
             
             asm volatile("vadd.vv v8, v0, v4");
-
+            printf("...\n");
             
             asm volatile("vmv.v.i v12, 0");
             asm volatile("vredsum.vs v12, v8, v12");

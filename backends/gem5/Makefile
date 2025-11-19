@@ -1,5 +1,5 @@
 CC          := riscv64-unknown-elf-gcc
-GEM5_BIN    := $(HOME)/gem5/build/RISCV/gem5.opt
+GEM5_BIN    := gem5/build/RISCV/gem5.opt
 RUN_SCRIPT  := run_rvv.py
 
 KERNEL      ?= fmatmul

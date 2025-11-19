@@ -15,10 +15,10 @@
 #include "bn.h"
 #include "avg_pool.h"
 
-extern int32_t input_image[];
-extern int32_t filter_3x3[];
-extern int32_t fc_weights[];
-extern int32_t fc_bias[];
+extern int8_t input_image[];
+extern int8_t filter_3x3[];
+extern int8_t fc_weights[];
+extern int8_t fc_bias[];
 
 #define IN_H 16
 #define IN_W 16
@@ -45,7 +45,7 @@ static inline uint64_t read_minstret(void) {
     return value;
 }
 
-void print_matrix_int(const int32_t *m, int H, int W, const char *name) {
+void print_matrix_int(const int8_t *m, int H, int W, const char *name) {
     printf("\n--- %s (%dx%d) ---\n", name, H, W);
     for (int r = 0; r < H; r++) {
         for (int c = 0; c < W; c++)
@@ -54,7 +54,7 @@ void print_matrix_int(const int32_t *m, int H, int W, const char *name) {
     }
 }
 
-void print_vector_int(const int32_t *v, int N, const char *name) {
+void print_vector_int(const int8_t *v, int N, const char *name) {
     printf("\n--- %s (%d) ---\n", name, N);
     for (int i = 0; i < N; i++)
         printf("%d ", v[i]);
@@ -63,20 +63,20 @@ void print_vector_int(const int32_t *v, int N, const char *name) {
 
 int main() {
 
-    static int32_t conv1_out[CONV1_OUT_H * CONV1_OUT_W] __attribute__((aligned(32*NR_LANES)));
+    static int8_t conv1_out[CONV1_OUT_H * CONV1_OUT_W] __attribute__((aligned(32*NR_LANES)));
 
-    static int32_t pool1_out[POOL1_OUT_H * POOL1_OUT_W] __attribute__((aligned(32*NR_LANES)));
+    static int8_t pool1_out[POOL1_OUT_H * POOL1_OUT_W] __attribute__((aligned(32*NR_LANES)));
 
-    static int32_t conv2_out[CONV2_OUT_H * CONV2_OUT_W] __attribute__((aligned(32*NR_LANES)));
+    static int8_t conv2_out[CONV2_OUT_H * CONV2_OUT_W] __attribute__((aligned(32*NR_LANES)));
 
-    static int32_t pool2_out[POOL2_OUT_H * POOL2_OUT_W] __attribute__((aligned(32*NR_LANES)));
-    static int32_t fc_out[FC_OUT] __attribute__((aligned(32*NR_LANES)));
+    static int8_t pool2_out[POOL2_OUT_H * POOL2_OUT_W] __attribute__((aligned(32*NR_LANES)));
+    static int8_t fc_out[FC_OUT] __attribute__((aligned(32*NR_LANES)));
 
 
-    const int32_t bn_mean  = 0;
-    const int32_t bn_invstd = 1;
-    const int32_t bn_gamma = 1;
-    const int32_t bn_beta  = 0;
+    const int8_t bn_mean  = 0;
+    const int8_t bn_invstd = 1;
+    const int8_t bn_gamma = 1;
+    const int8_t bn_beta  = 0;
 
     printf("Running CONV → BN → ReLU → MAXPOOL → CONV → BN → ReLU → AVGPOOL → FC\n");
 
@@ -86,11 +86,11 @@ int main() {
     start_timer();
 
     printf("\nRunning CONV1 3x3...\n");
-    iconv2d_3x3(conv1_out, input_image, filter_3x3,
+    iconv2d_3x3_uint8(conv1_out, input_image, filter_3x3,
                 CONV1_OUT_H, CONV1_OUT_W, CONV_F);
     
     printf("\nRunning Batch...\n");
-    ibatchnorm_2d_int32(conv1_out, conv1_out, bn_mean, bn_invstd,
+    ibatchnorm_2d(conv1_out, conv1_out, bn_mean, bn_invstd,
                         bn_gamma, bn_beta, CONV1_OUT_H, CONV1_OUT_W);
     
     printf("\nRunning ReLU...\n");
@@ -101,11 +101,11 @@ int main() {
 
 
     printf("\nRunning CONV2 3x3...\n");
-    iconv2d_3x3(conv2_out, pool1_out, filter_3x3,
+    iconv2d_3x3_uint8(conv2_out, pool1_out, filter_3x3,
                 CONV2_OUT_H, CONV2_OUT_W, CONV_F);
 
     printf("\nRunning Batch...\n");
-    ibatchnorm_2d_int32(conv2_out, conv2_out, bn_mean, bn_invstd,
+    ibatchnorm_2d(conv2_out, conv2_out, bn_mean, bn_invstd,
                         bn_gamma, bn_beta, CONV2_OUT_H, CONV2_OUT_W);
 
     printf("\nRunning ReLU...\n");

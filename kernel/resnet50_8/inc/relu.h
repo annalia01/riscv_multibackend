@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
-void relu(int32_t *data, int N);
+void relu(int8_t *data, int N);
 
 #endif
+
+
+

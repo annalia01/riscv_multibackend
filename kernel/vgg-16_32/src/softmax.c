@@ -165,5 +165,31 @@ void softmax_rvv(const float *input, float *output, int N)
         remaining -= vl;
     }
 }
+void int32_to_float32_rvv(const int32_t *src, float *dst, int N)
+{
+    int remaining = N;
 
+    while (remaining > 0)
+    {
+        size_t vl;
 
+        asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
+                     : "=r"(vl)
+                     : "r"(remaining));
+
+        // Load int32
+        asm volatile("vle32.v v0, (%0)"
+                     :: "r"(src));
+
+        // Convert int32 → float32
+        asm volatile("vfcvt.f.x.v v4, v0");
+
+        // Store float32
+        asm volatile("vse32.v v4, (%0)"
+                     :: "r"(dst));
+
+        src += vl;
+        dst += vl;
+        remaining -= vl;
+    }
+}

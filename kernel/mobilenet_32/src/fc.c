@@ -12,9 +12,7 @@ void fc(int32_t *mat, int32_t *vec, int rows, int cols, int32_t *out_vec)
         while(c < cols) {
 
             size_t vl;
-            asm volatile("vsetvli %0, %1, e32, m8, ta, ma"
-                        : "=r"(vl)
-                        : "r"(cols - c));
+            asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(cols - c));
 
             asm volatile("vle32.v v0, (%0)" :: "r"(row_ptr + c));
 
@@ -52,10 +50,8 @@ void add_bias_rvv(int32_t *out, const int32_t *bias, int N)
         asm volatile("vle32.v v0, (%0)" :: "r"(out_ptr));
         asm volatile("vle32.v v8, (%0)" :: "r"(bias_ptr));
 
-        // v0 = v0 + v4
         asm volatile("vadd.vv v16, v0, v8");
 
-        // Salva risultato
         asm volatile("vse32.v v16, (%0)" :: "r"(out_ptr));
 
         offset += vl;

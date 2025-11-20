@@ -30,14 +30,14 @@ void maxpool2x2(const int32_t *in, int H, int W, int32_t *out)
                         : "r"(2));
 
             asm volatile("vle32.v v0, (%0)" :: "r"(p0));
-            asm volatile("vle32.v v4, (%0)" :: "r"(p1));
-            asm volatile("vmax.vv v8, v0, v4");
+            asm volatile("vle32.v v8, (%0)" :: "r"(p1));
+            asm volatile("vmax.vv v16, v0, v8");
             printf("...\n");
-            asm volatile("vmv.v.i v12, 0");
-            asm volatile("vredmax.vs v12, v8, v12");
+            asm volatile("vmv.v.i v24, 0");
+            asm volatile("vredmax.vs v24, v8, v24");
 
             int32_t result;
-            asm volatile("vmv.x.s %0, v12" : "=r"(result));
+            asm volatile("vmv.x.s %0, v24" : "=r"(result));
 
             out_row[c] = result;
         }

@@ -139,4 +139,3 @@ void softmax_rvv(const float *input, float *output, int N)
         remaining -= vl;
     }
 }
-

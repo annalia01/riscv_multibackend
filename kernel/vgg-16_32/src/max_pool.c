@@ -26,7 +26,7 @@ void maxpool2x2(const int32_t *in, int H, int W, int32_t *out)
 
             size_t vl;
 
-            asm volatile("vsetvli %0, %1, e32, m4, ta, ma" : "=r"(vl) : "r"(2));
+            asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(2));
 
             asm volatile("vle32.v v0, (%0)" :: "r"(p0));
             asm volatile("vle32.v v8, (%0)" :: "r"(p1));

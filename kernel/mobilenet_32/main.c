@@ -98,7 +98,7 @@ int main() {
     static int32_t pool_out[PW_CH * POOL_OUT_H * POOL_OUT_W] __attribute__((aligned(32*NR_LANES)));
     static int32_t fc_out[FC_OUT] __attribute__((aligned(32*NR_LANES)));
     static float softmax_out[FC_OUT] __attribute__((aligned(32*NR_LANES)));
-printf("ciao");
+
     printf("Running Mini-MobileNet: Conv3x3 → PW_before → DW → PW_after → AvgPool → FC → Softmax\n");
 
 #ifdef SPIKEGEM
@@ -107,9 +107,6 @@ printf("ciao");
 
     start_timer();
 
-    // ========================================================
-    // 1) CONV 3×3 (standard, 1 canale → 1 canale)
-    // ========================================================
     printf("\nRunning Conv1 3x3...\n");
     iconv2d_3x3(conv1_out,
                 input_image,
@@ -117,14 +114,8 @@ printf("ciao");
                 CONV1_OUT_H, CONV1_OUT_W,
                 CONV1_F);
 
-
-    // print_matrix_int(conv1_out, CONV1_OUT_H, CONV1_OUT_W, "Conv1 Output");
-
     relu(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
 
-    // =====================
-    // 2) POINTWISE BEFORE 
-    // ====================
     printf("\nRunning Pointwise BEFORE (1→8)...\n");
     pointwise_before(conv1_out,
                      pw_before_weights,
@@ -136,9 +127,6 @@ printf("ciao");
   
     relu(pw1_out, PW_CH * PW1_OUT_H * PW1_OUT_W);
 
-    // =============
-    // 3) DEPTHWISE 
-    // =============
     printf("\nRunning Depthwise 3x3 (8→8)...\n");
     depthwise(dw_out,
               pw1_out,
@@ -149,9 +137,6 @@ printf("ciao");
 
     relu(dw_out, PW_CH * DW_OUT_H * DW_OUT_W);
 
-    // ===================
-    // 4) POINTWISE AFTER
-    // ===================
     printf("\nRunning Pointwise AFTER (8→8)...\n");
     pointwise_after(dw_out,
                     pw_after_weights,
@@ -162,9 +147,6 @@ printf("ciao");
 
     relu(pw2_out, PW_CH * PW2_OUT_H * PW2_OUT_W);
 
-    // ===============
-    // 5) AvgPool 2×2 
-    // ================
     printf("\nRunning AvgPool2x2 on 8 channels...\n");
     for (int c = 0; c < PW_CH; ++c) {
         const int32_t *in_ch  = pw2_out  + c * (PW2_OUT_H * PW2_OUT_W);
@@ -173,22 +155,14 @@ printf("ciao");
         avgpool2x2(in_ch, PW2_OUT_H, PW2_OUT_W, out_ch);
     }
 
-    // print_matrix_int(pool_out, POOL_OUT_H * PW_CH, POOL_OUT_W, "Pooled (stacked by channels)");
+ 
 
-    // ========================================================
-    // 6) Fully Connected
-    // ========================================================
     printf("\nRunning FC layer...\n");
 
-    // Convenzione: fc(mat=input, vec=weights, rows, cols, out_vec)
-    // rows = PW_CH * POOL_OUT_H
-    // cols = POOL_OUT_W
+
     fc(pool_out, fc_weights, FC_IN_ROWS, FC_IN_COLS, fc_out);
     add_bias_rvv(fc_out, fc_bias, FC_OUT);
 
-    // ========================================================
-    // 7) Softmax (richiede float)
-    // ========================================================
     printf("\nRunning Softmax...\n");
     float fc_out_f[FC_OUT];
     for (int i = 0; i < FC_OUT; i++)

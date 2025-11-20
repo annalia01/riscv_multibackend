@@ -52,10 +52,8 @@ void add_bias_rvv(int8_t *out, const int8_t *bias, int N)
         asm volatile("vle8.v v0, (%0)" :: "r"(out_ptr));
         asm volatile("vle8.v v8, (%0)" :: "r"(bias_ptr));
 
-        // v0 = v0 + v4
         asm volatile("vadd.vv v16, v0, v8");
 
-        // Salva risultato
         asm volatile("vse8.v v16, (%0)" :: "r"(out_ptr));
 
         offset += vl;

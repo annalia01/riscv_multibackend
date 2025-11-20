@@ -25,7 +25,7 @@ void avgpool2x2(const int8_t *in, int H, int W, int8_t *out)
             size_t vl;
 
            
-            asm volatile("vsetvli %0, %1, e8, m4, ta, ma"
+            asm volatile("vsetvli %0, %1, e8, m8, ta, ma"
                         : "=r"(vl)
                         : "r"(2));
 
@@ -33,17 +33,17 @@ void avgpool2x2(const int8_t *in, int H, int W, int8_t *out)
             asm volatile("vle8.v v0, (%0)" :: "r"(p0));
 
             
-            asm volatile("vle8.v v4, (%0)" :: "r"(p1));
+            asm volatile("vle8.v v8, (%0)" :: "r"(p1));
 
             
-            asm volatile("vadd.vv v8, v0, v4");
+            asm volatile("vadd.vv v16, v0, v8");
             printf("...\n");
             
-            asm volatile("vmv.v.i v12, 0");
-            asm volatile("vredsum.vs v12, v8, v12");
+            asm volatile("vmv.v.i v24, 0");
+            asm volatile("vredsum.vs v24, v16, v24");
 
             int8_t sum;
-            asm volatile("vmv.x.s %0, v12" : "=r"(sum));
+            asm volatile("vmv.x.s %0, v24" : "=r"(sum));
 
 
             out_row[c] = sum/4;

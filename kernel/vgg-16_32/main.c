@@ -71,9 +71,7 @@ int main() {
     static float softmax_out[FC_OUT]  __attribute__((aligned(32*NR_LANES)));
 
 
-    // ========================================================
-    // 1) CONV 3×3
-    // ========================================================
+
     printf("Running CONV 3x3...\n");
     #ifdef SPIKEGEM
     uint64_t start_minstret = read_minstret();
@@ -86,48 +84,28 @@ int main() {
 
     //print_matrix_int(conv_out, CONV_OUT_H, CONV_OUT_W, "Conv Output");
 
-
-    // ========================================================
-    // 2) ReLU
-    // ========================================================
     printf("\nRunning ReLU...\n");
 
     relu(conv_out, CONV_OUT_H * CONV_OUT_W);
 
     //print_matrix_int(conv_out, CONV_OUT_H, CONV_OUT_W, "ReLU Output");
 
-
-    // ========================================================
-    // 3) MaxPool 2×2
-    // ========================================================
     printf("\nRunning MaxPool...\n");
 
     maxpool2x2(conv_out, CONV_OUT_H, CONV_OUT_W, pool_out);
 
     //print_matrix_int(pool_out, POOL_OUT_H, POOL_OUT_W, "MaxPool Output");
 
-
-    // ========================================================
-    // 4) Fully Connected
-    // ========================================================
     printf("\nRunning FC layer...\n");
 
     fc(pool_out, fc_weights, POOL_OUT_H, POOL_OUT_W, fc_out);
     add_bias_rvv(fc_out, fc_bias, FC_OUT);
     //print_vector_int(fc_out, FC_OUT, "FC Output (logits int32)");
 
-
-    // ========================================================
-    // 5) Convert to float for softmax
-    // ========================================================
     
     float fc_out_f[FC_OUT];
     for (int i = 0; i < FC_OUT; i++) fc_out_f[i] = (float) fc_out[i];
 
-
-    // ========================================================
-    // 6) Softmax
-    // ========================================================
     printf("\nRunning Softmax...\n");
 
     softmax_rvv(fc_out_f, softmax_out, FC_OUT);

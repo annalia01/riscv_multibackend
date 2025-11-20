@@ -113,7 +113,7 @@ int main() {
     printf("\nRunning FC layer...\n");
 
     fc(pool_out, fc_weights, POOL_OUT_H, POOL_OUT_W, fc_out);
-
+    add_bias_rvv(fc_out, fc_bias, FC_OUT);
     //print_vector_int(fc_out, FC_OUT, "FC Output (logits int32)");
 
 

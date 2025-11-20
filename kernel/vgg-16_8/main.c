@@ -116,7 +116,7 @@ int main() {
 
     //print_vector_int(fc_out, FC_OUT, "FC Output (logits int32)");
     
-
+    add_bias_rvv(fc_out, fc_bias, FC_OUT);
     // ========================================================
     // 5) Convert to float for softmax
     // ========================================================

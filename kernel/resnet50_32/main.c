@@ -118,7 +118,7 @@ int main() {
     printf("\nRunning FC layer...\n");
     fc(pool2_out, fc_weights, POOL2_OUT_H, POOL2_OUT_W, fc_out);
 
-
+    add_bias_rvv(fc_out, fc_bias, FC_OUT);
     stop_timer();
 
 #ifdef SPIKEGEM

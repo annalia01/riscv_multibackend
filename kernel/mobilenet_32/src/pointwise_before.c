@@ -21,11 +21,7 @@ void pointwise_before(const int32_t *in, const int32_t *w, const int32_t *b, int
         while (remaining > 0) {
 
             size_t vl;
-            asm volatile(
-                "vsetvli %0, %1, e32, m8, ta, ma"
-                : "=r"(vl)
-                : "r"(remaining)
-            );
+            asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl): "r"(remaining));
 
             asm volatile("vle32.v v0, (%0)" :: "r"(in_ptr));
 

@@ -61,3 +61,44 @@ void add_bias_rvv(int8_t *out, const int8_t *bias, int N)
         remaining -= vl;
     }
 }
+
+void vector_add_int8(int8_t *dst, const int8_t *a, const int8_t *b,int N)
+{
+    int remaining = N;
+
+    while (remaining > 0) {
+
+        size_t vl;
+        asm volatile("vsetvli %0, %1, e8, m8, ta, ma" : "=r"(vl) : "r"(remaining));
+
+        asm volatile("vle8.v v0, (%0)" :: "r"(a));
+        asm volatile("vle8.v v8, (%0)" :: "r"(b));
+        asm volatile("vadd.vv v16, v0, v8");
+        asm volatile("vse8.v v16, (%0)" :: "r"(dst));
+
+
+        a       += vl;
+        b       += vl;
+        dst     += vl;
+        remaining -= vl;
+    }
+}
+
+void vector_copy_int8(int8_t *dst, const int8_t *src, int N)
+{
+    int remaining = N;
+
+    while (remaining > 0) {
+
+        size_t vl;
+        asm volatile("vsetvli %0, %1, e8, m8, ta, ma" : "=r"(vl) : "r"(remaining));
+
+        asm volatile("vle8.v v0, (%0)" :: "r"(src));
+
+        asm volatile("vse8.v v0, (%0)" :: "r"(dst));
+
+        src += vl;
+        dst += vl;
+        remaining -= vl;
+    }
+}

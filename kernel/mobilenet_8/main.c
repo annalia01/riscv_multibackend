@@ -172,7 +172,7 @@ printf("ciao");
     float fc_out_f[FC_OUT];
     for (int i = 0; i < FC_OUT; i++)
         fc_out_f[i] = (float) fc_out[i];
-
+    
     softmax_rvv(fc_out_f, softmax_out, FC_OUT);
 
     stop_timer();

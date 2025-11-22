@@ -60,3 +60,44 @@ void add_bias_rvv(int32_t *out, const int32_t *bias, int N)
         remaining -= vl;
     }
 }
+
+void vector_add_int32(int32_t *dst, const int32_t *a, const int32_t *b,int N)
+{
+    int remaining = N;
+
+    while (remaining > 0) {
+
+        size_t vl;
+        asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(remaining));
+
+        asm volatile("vle32.v v0, (%0)" :: "r"(a));
+        asm volatile("vle32.v v8, (%0)" :: "r"(b));
+        asm volatile("vadd.vv v16, v0, v8");
+        asm volatile("vse32.v v16, (%0)" :: "r"(dst));
+
+
+        a       += vl;
+        b       += vl;
+        dst     += vl;
+        remaining -= vl;
+    }
+}
+
+void vector_copy_int32(int32_t *dst, const int32_t *src, int N)
+{
+    int remaining = N;
+
+    while (remaining > 0) {
+
+        size_t vl;
+        asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(remaining));
+
+        asm volatile("vle32.v v0, (%0)" :: "r"(src));
+
+        asm volatile("vse32.v v0, (%0)" :: "r"(dst));
+
+        src += vl;
+        dst += vl;
+        remaining -= vl;
+    }
+}

@@ -165,8 +165,7 @@ int main() {
 
     printf("\nRunning Softmax...\n");
     float fc_out_f[FC_OUT];
-    for (int i = 0; i < FC_OUT; i++)
-        fc_out_f[i] = (float) fc_out[i];
+    int32_to_float32_rvv(fc_out, fc_out_f, FC_OUT);
 
     softmax_rvv(fc_out_f, softmax_out, FC_OUT);
 

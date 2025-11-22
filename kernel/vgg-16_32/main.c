@@ -4,6 +4,7 @@
 #else
 #include "printf.h"
 #endif
+
 #include <stdint.h>
 #include "runtime.h"
 #include "util.h"
@@ -13,113 +14,192 @@
 #include "fc.h"
 #include "softmax.h"
 
-
 extern int32_t input_image[];
-extern int32_t filter_3x3[];
-extern int32_t fc_weights[];
-extern int32_t fc_bias[];
 
-#define IN_H 16
-#define IN_W 16
+extern int32_t conv1_1_w[];
+extern int32_t conv1_2_w[];
 
-#define CONV_F 3
-#define CONV_OUT_H (IN_H - 2)
-#define CONV_OUT_W (IN_W - 2)
+extern int32_t conv2_1_w[];
+extern int32_t conv2_2_w[];
 
-#define POOL_OUT_H (CONV_OUT_H / 2)
-#define POOL_OUT_W (CONV_OUT_W / 2)
+extern int32_t conv3_1_w[];
+extern int32_t conv3_2_w[];
+extern int32_t conv3_3_w[];
 
-#define FLAT_SIZE (POOL_OUT_H * POOL_OUT_W)
-#define FC_OUT 10
+extern int32_t conv4_1_w[];
+extern int32_t conv4_2_w[];
+extern int32_t conv4_3_w[];
+
+extern int32_t conv5_1_w[];
+extern int32_t conv5_2_w[];
+extern int32_t conv5_3_w[];
+
+
+extern int32_t fc1_w[];
+extern int32_t fc1_b[];
+extern int32_t fc2_w[];
+extern int32_t fc2_b[];
+extern int32_t fc3_w[];
+extern int32_t fc3_b[];
+
+
+#define IN_H 224
+#define IN_W 224
+
+
+#define C11_H (IN_H - 2)
+#define C11_W (IN_W - 2)
+#define C12_H (C11_H - 2)
+#define C12_W (C11_W - 2)
+#define P1_H  (C12_H / 2)   
+#define P1_W  (C12_W / 2)
+
+#define C21_H (P1_H - 2)
+#define C21_W (P1_W - 2)
+#define C22_H (C21_H - 2)
+#define C22_W (C21_W - 2)
+#define P2_H  (C22_H / 2)   // 53
+#define P2_W  (C22_W / 2)
+
+
+#define C31_H (P2_H - 2)
+#define C31_W (P2_W - 2)
+#define C32_H (C31_H - 2)
+#define C32_W (C31_W - 2)
+#define C33_H (C32_H - 2)
+#define C33_W (C32_W - 2)
+#define P3_H  (C33_H / 2)   // 23
+#define P3_W  (C33_W / 2)
+
+#define C41_H (P3_H - 2)
+#define C41_W (P3_W - 2)
+#define C42_H (C41_H - 2)
+#define C42_W (C41_W - 2)
+#define C43_H (C42_H - 2)
+#define C43_W (C42_W - 2)
+#define P4_H  (C43_H / 2)   // 8
+#define P4_W  (C43_W / 2)
+
+#define C51_H (P4_H - 2)
+#define C51_W (P4_W - 2)
+#define C52_H (C51_H - 2)
+#define C52_W (C51_W - 2)
+#define C53_H (C52_H - 2)
+#define C53_W (C52_W - 2)
+#define P5_H  (C53_H / 2)   // 1
+#define P5_W  (C53_W / 2)
+
+#define FLAT_SIZE (P5_H * P5_W)   // = 1
+#define FC1_OUT  64
+#define FC2_OUT  64
+#define FC3_OUT  10
 
 static inline uint64_t read_minstret(void) {
     uint64_t value;
-    asm volatile ("csrr %0, instret" : "=r"(value));
+    asm volatile("csrr %0, instret" : "=r"(value));
     return value;
-}
-
-void print_matrix_int(const int32_t *m, int H, int W, const char *name) {
-    printf("\n--- %s (%dx%d) ---\n", name, H, W);
-    for (int r = 0; r < H; r++) {
-        for (int c = 0; c < W; c++)
-            printf("%4d ", m[r*W + c]);
-        printf("\n");
-    }
-}
-
-void print_vector_int(const int32_t *v, int N, const char *name) {
-    printf("\n--- %s (%d) ---\n", name, N);
-    for (int i = 0; i < N; i++)
-        printf("%d ", v[i]);
-    printf("\n");
-}
-
-void print_vector_float(const float *v, int N, const char *name) {
-    printf("\n--- %s (%d) ---\n", name, N);
-    for (int i = 0; i < N; i++)
-        printf("%.4f ", v[i]);
-    printf("\n");
 }
 
 
 int main() {
 
-    // ====== BUFFER LAYER ======
-    static int32_t conv_out[CONV_OUT_H * CONV_OUT_W] __attribute__((aligned(32*NR_LANES)));
-    static int32_t pool_out[POOL_OUT_H * POOL_OUT_W]  __attribute__((aligned(32*NR_LANES)));
-    static int32_t fc_out[FC_OUT]  __attribute__((aligned(32*NR_LANES)));
-    static float softmax_out[FC_OUT]  __attribute__((aligned(32*NR_LANES)));
+    printf("Running VGG-16...\n");
 
+ 
+    static int32_t c11[C11_H*C11_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c12[C12_H*C12_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t p1[P1_H*P1_W]     __attribute__((aligned(32*NR_LANES)));
 
+    static int32_t c21[C21_H*C21_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c22[C22_H*C22_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t p2[P2_H*P2_W]     __attribute__((aligned(32*NR_LANES)));
 
-    printf("Running CONV 3x3...\n");
-    #ifdef SPIKEGEM
+    static int32_t c31[C31_H*C31_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c32[C32_H*C32_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c33[C33_H*C33_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t p3[P3_H*P3_W]     __attribute__((aligned(32*NR_LANES)));
+
+    static int32_t c41[C41_H*C41_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c42[C42_H*C42_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c43[C43_H*C43_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t p4[P4_H*P4_W]     __attribute__((aligned(32*NR_LANES)));
+
+    static int32_t c51[C51_H*C51_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c52[C52_H*C52_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t c53[C53_H*C53_W] __attribute__((aligned(32*NR_LANES)));
+    static int32_t p5[P5_H*P5_W]     __attribute__((aligned(32*NR_LANES)));
+
+    static int32_t fc1_out[FC1_OUT] __attribute__((aligned(32*NR_LANES)));
+    static int32_t fc2_out[FC2_OUT] __attribute__((aligned(32*NR_LANES)));
+    static int32_t fc3_out[FC3_OUT] __attribute__((aligned(32*NR_LANES)));
+    static float softmax_out[FC3_OUT];
+
+#ifdef SPIKEGEM
     uint64_t start_minstret = read_minstret();
-    #endif
+#endif
     start_timer();
-    iconv2d_3x3(conv_out,
-                input_image,
-                filter_3x3,
-                CONV_OUT_H, CONV_OUT_W, CONV_F);
 
-    //print_matrix_int(conv_out, CONV_OUT_H, CONV_OUT_W, "Conv Output");
+    iconv2d_3x3(c11, input_image, conv1_1_w, IN_H, IN_W, 3);
+    relu(c11, C11_H*C11_W);
+    iconv2d_3x3(c12, c11, conv1_2_w, C11_H, C11_W, 3);  
+    relu(c12, C12_H*C12_W);
+    maxpool2x2(c12, C12_H, C12_W, p1);
 
-    printf("\nRunning ReLU...\n");
+    iconv2d_3x3(c21, p1, conv2_1_w, P1_H, P1_W, 3);
+    relu(c21, C21_H*C21_W);
+    iconv2d_3x3(c22, c21, conv2_2_w, C21_H, C21_W, 3);
+    relu(c22, C22_H*C22_W);
+    maxpool2x2(c22, C22_H, C22_W, p2);
 
-    relu(conv_out, CONV_OUT_H * CONV_OUT_W);
+    iconv2d_3x3(c31, p2, conv3_1_w, P2_H, P2_W, 3);   
+    relu(c31, C31_H*C31_W);
+    iconv2d_3x3(c32, c31, conv3_2_w, C31_H, C31_W, 3); 
+    relu(c32, C32_H*C32_W);
+    iconv2d_3x3(c33, c32, conv3_3_w, C32_H, C32_W, 3); 
+    relu(c33, C33_H*C33_W);
+    maxpool2x2(c33, C33_H, C33_W, p3);
 
-    //print_matrix_int(conv_out, CONV_OUT_H, CONV_OUT_W, "ReLU Output");
+    iconv2d_3x3(c41, p3, conv4_1_w, P3_H, P3_W, 3);   
+    relu(c41, C41_H*C41_W);
+    iconv2d_3x3(c42, c41, conv4_2_w, C41_H, C41_W, 3); 
+    relu(c42, C42_H*C42_W);
+    iconv2d_3x3(c43, c42, conv4_3_w, C42_H, C42_W, 3); 
+    relu(c43, C43_H*C43_W);
+    maxpool2x2(c43, C43_H, C43_W, p4);
 
-    printf("\nRunning MaxPool...\n");
+    iconv2d_3x3(c51, p4, conv5_1_w, P4_H, P4_W, 3);   
+    relu(c51, C51_H*C51_W);
+    iconv2d_3x3(c52, c51, conv5_2_w, C51_H, C51_W, 3); 
+    relu(c52, C52_H*C52_W);
+    iconv2d_3x3(c53, c52, conv5_3_w, C52_H, C52_W, 3); 
+    relu(c53, C53_H*C53_W);
+    maxpool2x2(c53, C53_H, C53_W, p5);  
 
-    maxpool2x2(conv_out, CONV_OUT_H, CONV_OUT_W, pool_out);
+    int32_t *flat = p5; 
 
-    //print_matrix_int(pool_out, POOL_OUT_H, POOL_OUT_W, "MaxPool Output");
+    fc(fc1_w, flat, FC1_OUT, FLAT_SIZE, fc1_out);
+    add_bias_rvv(fc1_out, fc1_b, FC1_OUT);
+    relu(fc1_out, FC1_OUT);
 
-    printf("\nRunning FC layer...\n");
+    fc(fc2_w, fc1_out, FC2_OUT, FC1_OUT, fc2_out);
+    add_bias_rvv(fc2_out, fc2_b, FC2_OUT);
+    relu(fc2_out, FC2_OUT);
 
-    fc(pool_out, fc_weights, POOL_OUT_H, POOL_OUT_W, fc_out);
-    add_bias_rvv(fc_out, fc_bias, FC_OUT);
-    //print_vector_int(fc_out, FC_OUT, "FC Output (logits int32)");
+    fc(fc3_w, fc2_out, FC3_OUT, FC2_OUT, fc3_out);
+    add_bias_rvv(fc3_out, fc3_b, FC3_OUT);
 
-    
-    float fc_out_f[FC_OUT];
-    for (int i = 0; i < FC_OUT; i++) fc_out_f[i] = (float) fc_out[i];
+    float fc3_f[FC3_OUT];
 
-    printf("\nRunning Softmax...\n");
+    int32_to_float32_rvv(fc3_out, fc3_f, FC3_OUT);
+    softmax_rvv(fc3_f, softmax_out, FC3_OUT);
 
-    softmax_rvv(fc_out_f, softmax_out, FC_OUT);
     stop_timer();
-    #ifdef SPIKEGEM
-    uint64_t end_minstret = read_minstret();
-    uint64_t delta_minstret = end_minstret - start_minstret;
-    #endif
-    //print_vector_float(softmax_out, FC_OUT, "Softmax Output");
-    int64_t runtime = get_timer();
-    #ifdef SPIKEGEM
-    printf("Instructions retired (CSR minstret): %lu\n", delta_minstret);
-    #endif
-    printf("The execution took %d cycles.\n", runtime);
 
+#ifdef SPIKEGEM
+    uint64_t end_minstret = read_minstret();
+    printf("Instructions retired: %lu\n", end_minstret - start_minstret);
+#endif
+
+    printf("Execution time: %d cycles.\n", get_timer());
     return 0;
 }

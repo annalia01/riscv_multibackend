@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 
 static inline void exp_poly(float *dst, float *src, int N)
@@ -139,4 +140,5 @@ void softmax_rvv(const float *input, float *output, int N)
         remaining -= vl;
     }
 }
+
 

@@ -60,7 +60,7 @@ int8_t input_image[IN_H * IN_W] __attribute__((aligned(32 * NR_LANES)));
 
 
 #define FILL_FILTER(name) \
-int32_t name[9] __attribute__((aligned(32*NR_LANES))) = { \
+int8_t name[9] __attribute__((aligned(32*NR_LANES))) = { \
     1, 0, -1, \
     1, 0, -1, \
     1, 0, -1  \

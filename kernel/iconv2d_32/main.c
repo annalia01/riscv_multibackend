@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "iconv2d.h"
+#include "iconv2d_32.h"
 #include "runtime.h"
 
 #include "util.h"

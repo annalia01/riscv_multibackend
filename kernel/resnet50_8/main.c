@@ -8,12 +8,13 @@
 #include <stdint.h>
 #include "runtime.h"
 #include "util.h"
-#include "iconv2d.h"
-#include "relu.h"
-#include "max_pool.h"
-#include "fc.h"
-#include "bn.h"
-#include "avg_pool.h"
+#include "iconv2d_8.h"
+#include "iconv2d_7x7_8.h"
+#include "relu_8.h"
+#include "max_pool_8.h"
+#include "fc_8.h"
+#include "bn_8.h"
+#include "avg_pool_8.h"
 
 
 extern int8_t input_image[];   
@@ -108,16 +109,16 @@ int main() {
                 CONV1_OUT_H, CONV1_OUT_W, CONV7_F);
 
     printf("[Layer] BN after CONV1...\n");
-    ibatchnorm_2d(conv1_out, conv1_out,
+    ibatchnorm_2d_8(conv1_out, conv1_out,
                         bn_mean, bn_invstd, bn_gamma, bn_beta,
                         CONV1_OUT_H, CONV1_OUT_W);
 
     printf("[Layer] ReLU after CONV1...\n");
-    relu(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
+    relu_8(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
 
 
     printf("[Layer] MAXPOOL 2x2...\n");
-    maxpool2x2(conv1_out, CONV1_OUT_H, CONV1_OUT_W, pool1_out);
+    maxpool2x2_8(conv1_out, CONV1_OUT_H, CONV1_OUT_W, pool1_out);
 
  
     vector_copy_int8(resblock_buf_a, pool1_out, RB_H * RB_W);
@@ -136,17 +137,17 @@ int main() {
                     dim_H, dim_W, 3);
         dim_H= RB_H -2*(b+1) -2*b;
         dim_W= RB_W -2*(b+1) -2*b;
-        ibatchnorm_2d(resblock_tmp, resblock_tmp,
+        ibatchnorm_2d_8(resblock_tmp, resblock_tmp,
                             bn_mean, bn_invstd, bn_gamma, bn_beta, dim_H, dim_W);
 
-        relu(resblock_tmp, dim_H * dim_W);
+        relu_8(resblock_tmp, dim_H * dim_W);
 
 
         iconv2d_3x3_uint8(res_out, resblock_tmp, filter_3x3,
                     dim_H, dim_W, 3);
         dim_H-=2;
         dim_W-=2;
-        ibatchnorm_2d(res_out, res_out,
+        ibatchnorm_2d_8(res_out, res_out,
                             bn_mean, bn_invstd, bn_gamma, bn_beta,
                             dim_H, dim_W);
 
@@ -154,7 +155,7 @@ int main() {
         vector_add_int8(res_out, res_out, res_in, dim_H * dim_W);
 
         
-        relu(res_out, dim_H * dim_W);
+        relu_8(res_out, dim_H * dim_W);
 
        
         int8_t *tmp = res_in;
@@ -169,7 +170,7 @@ int main() {
     const int AP1_OUT_H= dim_H/2;
     const int AP1_OUT_W= dim_W/2;
     int8_t avg1_out[AP1_OUT_H * AP1_OUT_W] __attribute__((aligned(32 * NR_LANES)));
-    avgpool2x2(res_in, dim_H, dim_W, avg1_out);
+    avgpool2x2_8(res_in, dim_H, dim_W, avg1_out);
     
     
     printf("[Layer] AVGPOOL 2x2 #2...\n");
@@ -178,13 +179,13 @@ int main() {
     int8_t avg2_out[AP2_OUT_H * AP2_OUT_W]__attribute__((aligned(32 * NR_LANES)));
     
     
-    avgpool2x2(avg1_out, AP1_OUT_H, AP1_OUT_W, avg2_out);
+    avgpool2x2_8(avg1_out, AP1_OUT_H, AP1_OUT_W, avg2_out);
     
     printf("[Layer] AVGPOOL 2x2 #3...\n");
     const int AP3_OUT_H= AP2_OUT_H/2;
     const int AP3_OUT_W= AP2_OUT_W/2;
     int8_t avg3_out[AP3_OUT_H * AP3_OUT_W] __attribute__((aligned(32 * NR_LANES)));
-    avgpool2x2(avg2_out, AP2_OUT_H, AP2_OUT_W, avg3_out);
+    avgpool2x2_8(avg2_out, AP2_OUT_H, AP2_OUT_W, avg3_out);
     
     
     printf("[Layer] FC layer...\n");
@@ -193,10 +194,10 @@ int main() {
     int8_t *final_feat = avg3_out; 
 
 
-    fc(fc_weights, final_feat, FC_OUT, FLAT_SIZE, fc_out);
+    fc_8(fc_weights, final_feat, FC_OUT, FLAT_SIZE, fc_out);
 
 
-    add_bias_rvv(fc_out, fc_bias, FC_OUT);
+    add_bias_rvv_8(fc_out, fc_bias, FC_OUT);
 
     stop_timer();
 

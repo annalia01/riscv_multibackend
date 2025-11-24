@@ -8,14 +8,14 @@
 #include <stdint.h>
 #include "runtime.h"
 #include "util.h"
-#include "avg_pool.h"
-#include "iconv2d.h"
-#include "relu.h"
-#include "fc.h"
+#include "avg_pool_32.h"
+#include "iconv2d_32.h"
+#include "relu_32.h"
+#include "fc_32.h"
 #include "depthwise.h"
 #include "pointwise_before.h"
 #include "pointwise_after.h"
-#include "softmax.h"
+#include "softmax_32.h"
 
 
 
@@ -114,7 +114,7 @@ int main() {
                 CONV1_OUT_H, CONV1_OUT_W,
                 CONV1_F);
 
-    relu(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
+    relu_32(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
 
     printf("\nRunning Pointwise BEFORE (1→8)...\n");
     pointwise_before(conv1_out,
@@ -125,7 +125,7 @@ int main() {
                      pw1_out);
 
   
-    relu(pw1_out, PW_CH * PW1_OUT_H * PW1_OUT_W);
+    relu_32(pw1_out, PW_CH * PW1_OUT_H * PW1_OUT_W);
 
     printf("\nRunning Depthwise 3x3 (8→8)...\n");
     depthwise(dw_out,
@@ -135,7 +135,7 @@ int main() {
               PW1_OUT_W);
 
 
-    relu(dw_out, PW_CH * DW_OUT_H * DW_OUT_W);
+    relu_32(dw_out, PW_CH * DW_OUT_H * DW_OUT_W);
 
     printf("\nRunning Pointwise AFTER (8→8)...\n");
     pointwise_after(dw_out,
@@ -145,14 +145,14 @@ int main() {
                     DW_OUT_W,
                     pw2_out);
 
-    relu(pw2_out, PW_CH * PW2_OUT_H * PW2_OUT_W);
+    relu_32(pw2_out, PW_CH * PW2_OUT_H * PW2_OUT_W);
 
     printf("\nRunning AvgPool2x2 on 8 channels...\n");
     for (int c = 0; c < PW_CH; ++c) {
         const int32_t *in_ch  = pw2_out  + c * (PW2_OUT_H * PW2_OUT_W);
         int32_t       *out_ch = pool_out + c * (POOL_OUT_H * POOL_OUT_W);
 
-        avgpool2x2(in_ch, PW2_OUT_H, PW2_OUT_W, out_ch);
+        avgpool2x2_32(in_ch, PW2_OUT_H, PW2_OUT_W, out_ch);
     }
 
  
@@ -160,14 +160,14 @@ int main() {
     printf("\nRunning FC layer...\n");
 
 
-    fc(pool_out, fc_weights, FC_IN_ROWS, FC_IN_COLS, fc_out);
-    add_bias_rvv(fc_out, fc_bias, FC_OUT);
+    fc_32(pool_out, fc_weights, FC_IN_ROWS, FC_IN_COLS, fc_out);
+    add_bias_rvv_32(fc_out, fc_bias, FC_OUT);
 
     printf("\nRunning Softmax...\n");
     float fc_out_f[FC_OUT];
     int32_to_float32_rvv(fc_out, fc_out_f, FC_OUT);
 
-    softmax_rvv(fc_out_f, softmax_out, FC_OUT);
+    softmax_rvv_32(fc_out_f, softmax_out, FC_OUT);
 
     stop_timer();
 

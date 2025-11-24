@@ -8,14 +8,14 @@
 #include <stdint.h>
 #include "runtime.h"
 #include "util.h"
-#include "avg_pool.h"
-#include "iconv2d.h"
-#include "relu.h"
-#include "fc.h"
+#include "avg_pool_8.h"
+#include "iconv2d_8.h"
+#include "relu_8.h"
+#include "fc_8.h"
 #include "depthwise.h"
 #include "pointwise_before.h"
 #include "pointwise_after.h"
-#include "softmax.h"
+#include "softmax_8.h"
 
 
 
@@ -117,7 +117,7 @@ printf("ciao");
 
     // print_matrix_int(conv1_out, CONV1_OUT_H, CONV1_OUT_W, "Conv1 Output");
 
-    relu(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
+    relu_8(conv1_out, CONV1_OUT_H * CONV1_OUT_W);
 
     printf("\nRunning Pointwise BEFORE (1→8)...\n");
     pointwise_before(conv1_out,
@@ -128,7 +128,7 @@ printf("ciao");
                      pw1_out);
 
   
-    relu(pw1_out, PW_CH * PW1_OUT_H * PW1_OUT_W);
+    relu_8(pw1_out, PW_CH * PW1_OUT_H * PW1_OUT_W);
 
   
     printf("\nRunning Depthwise 3x3 (8→8)...\n");
@@ -139,7 +139,7 @@ printf("ciao");
               PW1_OUT_W);
 
 
-    relu(dw_out, PW_CH * DW_OUT_H * DW_OUT_W);
+    relu_8(dw_out, PW_CH * DW_OUT_H * DW_OUT_W);
 
     printf("\nRunning Pointwise AFTER (8→8)...\n");
     pointwise_after(dw_out,
@@ -149,14 +149,14 @@ printf("ciao");
                     DW_OUT_W,
                     pw2_out);
 
-    relu(pw2_out, PW_CH * PW2_OUT_H * PW2_OUT_W);
+    relu_8(pw2_out, PW_CH * PW2_OUT_H * PW2_OUT_W);
 
     printf("\nRunning AvgPool2x2 on 8 channels...\n");
     for (int c = 0; c < PW_CH; ++c) {
         const int8_t *in_ch  = pw2_out  + c * (PW2_OUT_H * PW2_OUT_W);
         int8_t       *out_ch = pool_out + c * (POOL_OUT_H * POOL_OUT_W);
 
-        avgpool2x2(in_ch, PW2_OUT_H, PW2_OUT_W, out_ch);
+        avgpool2x2_8(in_ch, PW2_OUT_H, PW2_OUT_W, out_ch);
     }
 
     // print_matrix_int(pool_out, POOL_OUT_H * PW_CH, POOL_OUT_W, "Pooled (stacked by channels)");
@@ -165,15 +165,15 @@ printf("ciao");
     printf("\nRunning FC layer...\n");
 
   
-    fc(pool_out, fc_weights, FC_IN_ROWS, FC_IN_COLS, fc_out);
-    add_bias_rvv(fc_out, fc_bias, FC_OUT);
+    fc_8(pool_out, fc_weights, FC_IN_ROWS, FC_IN_COLS, fc_out);
+    add_bias_rvv_8(fc_out, fc_bias, FC_OUT);
 
     printf("\nRunning Softmax...\n");
     float fc_out_f[FC_OUT];
     for (int i = 0; i < FC_OUT; i++)
         fc_out_f[i] = (float) fc_out[i];
     
-    softmax_rvv(fc_out_f, softmax_out, FC_OUT);
+    softmax_rvv_8(fc_out_f, softmax_out, FC_OUT);
 
     stop_timer();
 

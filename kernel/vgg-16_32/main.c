@@ -8,11 +8,11 @@
 #include <stdint.h>
 #include "runtime.h"
 #include "util.h"
-#include "iconv2d.h"
-#include "relu.h"
-#include "max_pool.h"
-#include "fc.h"
-#include "softmax.h"
+#include "iconv2d_32.h"
+#include "relu_32.h"
+#include "max_pool_32.h"
+#include "fc_32.h"
+#include "softmax_32.h"
 
 extern int32_t input_image[];
 
@@ -140,58 +140,58 @@ int main() {
     start_timer();
 
     iconv2d_3x3(c11, input_image, conv1_1_w, IN_H, IN_W, 3);
-    relu(c11, C11_H*C11_W);
+    relu_32(c11, C11_H*C11_W);
     iconv2d_3x3(c12, c11, conv1_2_w, C11_H, C11_W, 3);  
-    relu(c12, C12_H*C12_W);
-    maxpool2x2(c12, C12_H, C12_W, p1);
+    relu_32(c12, C12_H*C12_W);
+    maxpool2x2_32(c12, C12_H, C12_W, p1);
 
     iconv2d_3x3(c21, p1, conv2_1_w, P1_H, P1_W, 3);
-    relu(c21, C21_H*C21_W);
+    relu_32(c21, C21_H*C21_W);
     iconv2d_3x3(c22, c21, conv2_2_w, C21_H, C21_W, 3);
-    relu(c22, C22_H*C22_W);
-    maxpool2x2(c22, C22_H, C22_W, p2);
+    relu_32(c22, C22_H*C22_W);
+    maxpool2x2_32(c22, C22_H, C22_W, p2);
 
     iconv2d_3x3(c31, p2, conv3_1_w, P2_H, P2_W, 3);   
-    relu(c31, C31_H*C31_W);
+    relu_32(c31, C31_H*C31_W);
     iconv2d_3x3(c32, c31, conv3_2_w, C31_H, C31_W, 3); 
-    relu(c32, C32_H*C32_W);
+    relu_32(c32, C32_H*C32_W);
     iconv2d_3x3(c33, c32, conv3_3_w, C32_H, C32_W, 3); 
-    relu(c33, C33_H*C33_W);
-    maxpool2x2(c33, C33_H, C33_W, p3);
+    relu_32(c33, C33_H*C33_W);
+    maxpool2x2_32(c33, C33_H, C33_W, p3);
 
     iconv2d_3x3(c41, p3, conv4_1_w, P3_H, P3_W, 3);   
-    relu(c41, C41_H*C41_W);
+    relu_32(c41, C41_H*C41_W);
     iconv2d_3x3(c42, c41, conv4_2_w, C41_H, C41_W, 3); 
-    relu(c42, C42_H*C42_W);
+    relu_32(c42, C42_H*C42_W);
     iconv2d_3x3(c43, c42, conv4_3_w, C42_H, C42_W, 3); 
-    relu(c43, C43_H*C43_W);
-    maxpool2x2(c43, C43_H, C43_W, p4);
+    relu_32(c43, C43_H*C43_W);
+    maxpool2x2_32(c43, C43_H, C43_W, p4);
 
     iconv2d_3x3(c51, p4, conv5_1_w, P4_H, P4_W, 3);   
-    relu(c51, C51_H*C51_W);
+    relu_32(c51, C51_H*C51_W);
     iconv2d_3x3(c52, c51, conv5_2_w, C51_H, C51_W, 3); 
-    relu(c52, C52_H*C52_W);
+    relu_32(c52, C52_H*C52_W);
     iconv2d_3x3(c53, c52, conv5_3_w, C52_H, C52_W, 3); 
-    relu(c53, C53_H*C53_W);
-    maxpool2x2(c53, C53_H, C53_W, p5);  
+    relu_32(c53, C53_H*C53_W);
+    maxpool2x2_32(c53, C53_H, C53_W, p5);  
 
     int32_t *flat = p5; 
 
-    fc(fc1_w, flat, FC1_OUT, FLAT_SIZE, fc1_out);
-    add_bias_rvv(fc1_out, fc1_b, FC1_OUT);
-    relu(fc1_out, FC1_OUT);
+    fc_32(fc1_w, flat, FC1_OUT, FLAT_SIZE, fc1_out);
+    add_bias_rvv_32(fc1_out, fc1_b, FC1_OUT);
+    relu_32(fc1_out, FC1_OUT);
 
-    fc(fc2_w, fc1_out, FC2_OUT, FC1_OUT, fc2_out);
-    add_bias_rvv(fc2_out, fc2_b, FC2_OUT);
-    relu(fc2_out, FC2_OUT);
+    fc_32(fc2_w, fc1_out, FC2_OUT, FC1_OUT, fc2_out);
+    add_bias_rvv_32(fc2_out, fc2_b, FC2_OUT);
+    relu_32(fc2_out, FC2_OUT);
 
-    fc(fc3_w, fc2_out, FC3_OUT, FC2_OUT, fc3_out);
-    add_bias_rvv(fc3_out, fc3_b, FC3_OUT);
+    fc_32(fc3_w, fc2_out, FC3_OUT, FC2_OUT, fc3_out);
+    add_bias_rvv_32(fc3_out, fc3_b, FC3_OUT);
 
     float fc3_f[FC3_OUT];
 
     int32_to_float32_rvv(fc3_out, fc3_f, FC3_OUT);
-    softmax_rvv(fc3_f, softmax_out, FC3_OUT);
+    softmax_rvv_32(fc3_f, softmax_out, FC3_OUT);
 
     stop_timer();
 

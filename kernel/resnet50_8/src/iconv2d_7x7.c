@@ -44,7 +44,7 @@
   is used To calculate 7 different output rows.
 */
 
-#include "../inc/iconv2d.h"
+#include "iconv2d_7x7_8.h"
 #include <stdio.h>
 
 void iconv2d_7x7_uint8(int8_t *o, uint8_t *i, int8_t *f, int64_t M, int64_t N,

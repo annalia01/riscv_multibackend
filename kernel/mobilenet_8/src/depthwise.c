@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "iconv2d.h"
+#include "iconv2d_8.h"
 #include "depthwise.h"
 
 #define DW_C 8

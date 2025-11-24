@@ -46,7 +46,7 @@ void sspmv_32(int32_t M, int32_t N, int32_t rows, int32_t cols,
 
         while (remaining > 0) {
             int vl;
-            asm volatile("vsetvli %0, %1, e32, m1, ta, ma"
+            asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                          : "=r"(vl) : "r"(remaining) : "memory");
             asm volatile("vle32.v v0, (%0)" :: "r"(i_ + offset) : "memory");
 

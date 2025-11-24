@@ -66,7 +66,7 @@ void iconv2d_3x3_uint8(uint8_t *o, uint8_t *i, uint8_t *f, int64_t R, int64_t C,
       int32_t remaining = C - c;
 
       size_t vl;
-      asm volatile("vsetvli %0, %1, e8, m4, ta, ma" : "=r"(vl) : "r"(remaining));
+      asm volatile("vsetvli %0, %1, e8, m2, ta, ma" : "=r"(vl) : "r"(remaining));
 
       int32_t ext = (int32_t)vl + (int32_t)(F - 1);
 
@@ -74,7 +74,7 @@ void iconv2d_3x3_uint8(uint8_t *o, uint8_t *i, uint8_t *f, int64_t R, int64_t C,
       uint8_t *i_col = i_row_base + c + 1;
       uint8_t *o_ = o_row_base + c;
 
-      asm volatile("vsetvli zero, %0, e8, m4, ta, ma" :: "r"(ext));
+      asm volatile("vsetvli zero, %0, e8, m2, ta, ma" :: "r"(ext));
 
       asm volatile("vmv.v.i v0, 0");
       asm volatile("vmv.v.i v4, 0");
@@ -103,7 +103,7 @@ void iconv2d_3x3_uint8(uint8_t *o, uint8_t *i, uint8_t *f, int64_t R, int64_t C,
 
       asm volatile("vmul.vx v8, v20, %0" ::"r"(t0));
 
-      asm volatile("vsetvli zero, %0, e8, m4, ta, ma" :: "r"(remaining));
+      asm volatile("vsetvli zero, %0, e8, m2, ta, ma" :: "r"(remaining));
 
       asm volatile("vmacc.vx v8, %0, v24" ::"r"(t1));
 

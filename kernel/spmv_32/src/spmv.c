@@ -42,13 +42,13 @@ void spmv_csr_idx32(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
 
   for (int i = 0; i < N_ROW; ++i) {
     // --- reset accumulatore ---
-    asm volatile("vsetvli zero, %0, e32, m2, ta, ma" :: "r"(1));
+    asm volatile("vsetvli zero, %0, e32, m4, ta, ma" :: "r"(1));
     asm volatile("vmv.v.i v16, 0");
 
 
     while (len > 0) {
       size_t vl;
-      asm volatile("vsetvli %0, %1, e32, m2, ta, ma"
+      asm volatile("vsetvli %0, %1, e32, m4, ta, ma"
                    : "=r"(vl) : "r"(len));
 
       asm volatile("vle32.v v4, (%0)" :: "r"(data));   // carica valori

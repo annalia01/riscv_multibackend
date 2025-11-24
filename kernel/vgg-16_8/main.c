@@ -187,6 +187,7 @@ int main() {
 
     fc_8(fc3_w, fc2_out, FC3_OUT, FC2_OUT, fc3_out);
     add_bias_rvv_8(fc3_out, fc3_b, FC3_OUT);
+    relu_8(fc3_out, FC3_OUT);
 
     float fc3_f[FC3_OUT];
     for(int i=0; i<FC3_OUT; i++) fc3_f[i]=(float)fc3_out[i];

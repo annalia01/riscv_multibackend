@@ -43,7 +43,7 @@ void sspgemm_32(int32_t M, int32_t N,
             int32_t remaining = cols_b - k;
             int32_t vl;
 
-            asm volatile("vsetvli %0, %1, e32, m1, ta, ma"
+            asm volatile("vsetvli %0, %1, e32, m8, ta, ma"
                          : "=r"(vl)
                          : "r"(remaining));
 

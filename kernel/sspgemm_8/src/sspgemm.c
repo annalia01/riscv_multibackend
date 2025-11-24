@@ -42,7 +42,7 @@ void sspgemm_32(uint8_t M, uint8_t N,
             int32_t remaining = cols_b - k;
             int32_t vl;
 
-            asm volatile("vsetvli %0, %1, e8, m1, ta, ma"
+            asm volatile("vsetvli %0, %1, e8, m8, ta, ma"
                          : "=r"(vl)
                          : "r"(remaining));
 
@@ -56,11 +56,11 @@ void sspgemm_32(uint8_t M, uint8_t N,
 
                 uint8_t *b_ptr = &B[s1 * cols_b + k];  
 
-                asm volatile("vle8.v v4, (%0)" :: "r"(b_ptr));
+                asm volatile("vle8.v v8, (%0)" :: "r"(b_ptr));
 
                 uint8_t s0 = VALUES[i * nnzpr + j];
 
-                asm volatile("vmacc.vx v0, %0, v4" :: "r"(s0));
+                asm volatile("vmacc.vx v0, %0, v8" :: "r"(s0));
             }
 
             uint8_t *c_ptr = c_row + k;

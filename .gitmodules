@@ -7,3 +7,7 @@
 [submodule "benchmarks/openblas"]
 	path = benchmarks/openblas
 	url = https://github.com/OpenMathLib/OpenBLAS.git
+[submodule "backends/ara_2_lanes/Simply-V"]
+	path = backends/ara_2_lanes/Simply-V
+	url = https://github.com/annalia01/Simply-V.git
+	branch = feature/rvv/ara

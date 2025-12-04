@@ -50,7 +50,7 @@ else ifeq ($(BACKEND),ara_2_lanes)
 	@echo "[ROOT] Running kernel $(KERNEL) on Ara2..."
 	@$(MAKE) -C $(ARA2_DIR) KERNEL=$(KERNEL) run
 else
-	@echo "[ERROR] Unknown BACKEND=$(BACKEND). Use ara | spike | gem5."
+	@echo "[ERROR] Unknown BACKEND=$(BACKEND). Use ara | spike | gem5 | ara_2_lanes."
 	exit 1
 endif
 

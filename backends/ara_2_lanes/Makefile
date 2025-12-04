@@ -9,7 +9,7 @@ SIMPLYV_DIR := $(SELF_DIR)/Simply-V
 EXAMPLES_DIR := $(SIMPLYV_DIR)/sw/SoC/examples
 HW_DIR := $(SIMPLYV_DIR)/hw/xilinx
 
-.PHONY: prepare_simplyv build openocd_run run
+.PHONY: prepare_simplyv build openocd_run run sw
 
 prepare_simplyv:
 	@echo "[ARA2] Preparing Simply-V environment..."
@@ -18,9 +18,11 @@ prepare_simplyv:
 	@make -C $(HW_DIR) program_bitstream
 	@echo "[ARA2] Simply-V ready."
 
-build:
+sw: 
 	@echo "[ARA2] Building example $(KERNEL)..."
 	@make -C $(SIMPLYV_DIR) sw
+
+build:
 	@make -C $(EXAMPLES_DIR)/$(KERNEL) clean all
 	@echo "[ARA2] Build complete."
 

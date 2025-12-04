@@ -25,8 +25,9 @@ Running make prepare_simplyv performs all required steps inside the Simply-V dir
   3. Programs the FPGA bitstream
     - Flashes the newly built hardware design onto the FPGA board, making the system ready to execute kernels.
 
-To build the application, use the following target:
+To build the libraries, use the following target:
 
-make KERNEL=fm
-
+```bash
+make sw
+```
 

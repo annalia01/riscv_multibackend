@@ -21,40 +21,6 @@ endif
 
 
 build:
-	@if [ -z "$(KERNEL)" ]; then \
-		echo "[ERROR] Please specify a kernel: make app KERNEL=name"; \
-		exit 1; \
-	fi
-
-	@echo "[ARA2] Preparing example for $(KERNEL)..."
-	mkdir -p $(EXAMPLES_DIR)/$(KERNEL)
-
-	@echo "[ARA2] Copy kernel sources..."
-	if [ ! -d "$(KERNEL_DIR)/$(KERNEL)" ]; then \
-		echo "[ERROR] Kernel $(KERNEL) does not exist in kernel/"; \
-		exit 1; \
-	fi
-
-	cp -u $(KERNEL_DIR)/$(KERNEL)/*.c $(EXAMPLES_DIR)/$(KERNEL)/ 2>/dev/null || true
-
-	if [ -d "$(KERNEL_DIR)/$(KERNEL)/inc" ]; then \
-		cp -u $(KERNEL_DIR)/$(KERNEL)/inc/* $(EXAMPLES_DIR)/$(KERNEL)/ 2>/dev/null || true; \
-	fi
-
-	if [ -d "$(KERNEL_DIR)/$(KERNEL)/src" ]; then \
-		cp -u $(KERNEL_DIR)/$(KERNEL)/src/*.c $(EXAMPLES_DIR)/$(KERNEL)/ 2>/dev/null || true; \
-	fi
-
-
-	@echo "[ARA2] Copying dataset (if available)..."
-	if [ -d "$(DATA_DIR)/$(KERNEL)" ]; then \
-		cp -u $(DATA_DIR)/$(KERNEL)/* $(EXAMPLES_DIR)/$(KERNEL)/ 2>/dev/null || true; \
-	fi
-
-	@echo "[ARA2] Copying common files (*.$(COMMON_SUFFIX))..."
-	cp -u $(COMMON_DIR)/*_$(COMMON_SUFFIX).c $(EXAMPLES_DIR)/$(KERNEL)/ 2>/dev/null || true
-	cp -u $(COMMON_DIR)/*_$(COMMON_SUFFIX).h $(EXAMPLES_DIR)/$(KERNEL)/ 2>/dev/null || true
-
 	@echo "[ARA2] Building example in Simply-V/sw/SoC/examples/$(KERNEL)..."
 	make -C $(EXAMPLES_DIR)/$(KERNEL) clean all
 
@@ -66,7 +32,7 @@ run:
 	fi
 
 	@if [ ! -d "$(EXAMPLES_DIR)/$(KERNEL)" ]; then \
-		echo "[ERROR] Example not built. First run: make app KERNEL=$(KERNEL)"; \
+		echo "[ERROR] Example not built. First run: make build KERNEL=$(KERNEL)"; \
 		exit 1; \
 	fi
 

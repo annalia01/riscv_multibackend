@@ -8,9 +8,10 @@ BACKENDS_DIR := backends
 ARA_DIR      := $(BACKENDS_DIR)/ara
 SPIKE_DIR    := $(BACKENDS_DIR)/spike
 GEM5_DIR     := $(BACKENDS_DIR)/gem5
+ARA2_DIR	 := $(BACKENDS_DIR)/ara_2_lanes
 
 # === Target di build comuni ===
-.PHONY: build run clean
+.PHONY: build run clean openocd_run
 
 # === BUILD ===
 build:
@@ -23,11 +24,17 @@ else ifeq ($(BACKEND),gem5)
 else ifeq ($(BACKEND),ara)
 	@echo "[ROOT] Building kernel $(KERNEL) for Ara..."
 	@$(MAKE) -C $(ARA_DIR) KERNEL=$(KERNEL) app
+else ifeq ($(BACKEND),ara_2_lanes)
+	@echo "[ROOT] Building kernel $(KERNEL) for Ara2..."
+	@$(MAKE) -C $(ARA2_DIR) KERNEL=$(KERNEL) build
 else
 	@echo "[ERROR] Unknown BACKEND=$(BACKEND). Use ara | spike | gem5."
 	exit 1
 endif
 
+openocd_run:
+	@echo "Make openocd..."
+	@$(MAKE) -C $(ARA2_DIR) openocd_run
 # === RUN ===
 run:
 ifeq ($(BACKEND),spike)
@@ -39,6 +46,9 @@ else ifeq ($(BACKEND),gem5)
 else ifeq ($(BACKEND),ara)
 	@echo "[ROOT] Running $(KERNEL) on Ara (Verilator)..."
 	@$(MAKE) -C $(ARA_DIR) KERNEL=$(KERNEL) run
+else ifeq ($(BACKEND),ara_2_lanes)
+	@echo "[ROOT] Running kernel $(KERNEL) on Ara2..."
+	@$(MAKE) -C $(ARA2_DIR) KERNEL=$(KERNEL) run
 else
 	@echo "[ERROR] Unknown BACKEND=$(BACKEND). Use ara | spike | gem5."
 	exit 1

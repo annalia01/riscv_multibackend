@@ -2,6 +2,7 @@
 
 This repository provides a modular simulation environment for evaluating the performance of RISC-V vector code across different backends.  
 It integrates multiple simulation targets — functional, architectural, and RTL — enabling seamless compilation and execution of the same benchmark on each backend.
+You can also run the code on real hardware using ARA (2-lane configuration).
 
 The goal of this framework is to analyze the performance, scalability, and correctness of RISC-V Vector applications under different simulation levels.  
 Each backend (e.g., Spike, Gem5, Ara) can be independently built and configured, allowing flexible experimentation and comparison.
@@ -67,6 +68,11 @@ For the verilator setup, go to the backends/ara/ directory and follow the instal
 All commands must be executed within that directory.
 Once verilator set up is finished, all applications can be compiled and executed from the root directory of the project.
 
+## ARA 2 LANES SETUP
+For the ara_2_lanes setup, go to the backends/ara_2_lanes/ directory and follow the installation instructions provided there.
+All commands must be executed within that directory.
+Once verilator set up is finished, all applications can be compiled and executed from the root directory of the project.
+
 ## Build Applications
 
 In this directory, you can build applications for any backend and kernel using the following command:
@@ -83,3 +89,33 @@ To run an application, use:
 ```bash
 make BACKEND=ara KERNEL=fmatmul_32 run
 ```
+# Real Hardware
+
+You can run the following kernel:
+  - fmatmul_32
+  - iconv2d_32
+  - sspmv_32
+  - spmv_32
+  - sspgemm_32
+    
+## Build Applications on real hardware
+
+You can build applications using the following command:
+```bash
+make BACKEND=ara KERNEL=fmatmul_32 build
+```
+
+Then you have use the following command:
+```bash
+make openocd_run
+```
+
+##
+## Run Applications
+
+In another shell, to run an application, use:
+```bash
+make BACKEND=ara_2_lanes KERNEL=fmatmul_32 run
+```
+
+

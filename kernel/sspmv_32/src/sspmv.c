@@ -1,3 +1,13 @@
+/*
+ * Vector kernel implemented for the thesis work of <Annalia Ruggiero>.
+ *
+ * The algorithm is based on the S3 scheme described in:
+ * <Titopoulos; Alexandridis; Peltekis; Nicopoulos; Dimitrakopoulos>,
+ * <Optimizing Structured-Sparse Matrix Multiplication in RISC-V Vector Processors>, <2025>.
+ *
+ *
+ */
+
 #include "sspmv.h"
 #include "runtime.h"
 #include "util.h"

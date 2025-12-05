@@ -11,9 +11,6 @@
 #define ASSUME_ALIGNED_64(p) ((float*)__builtin_assume_aligned((p), 64))
 
 
-
-// --- Dispatcher --------------------------------------------------------------
-
 void fmatmul(float * __restrict c_,
              const float * __restrict a_,
              const float * __restrict b_,
@@ -28,9 +25,6 @@ void fmatmul(float * __restrict c_,
 
 }
 
-// ============================================================================
-// 4x4
-// ============================================================================
 
 void fmatmul_4x4(float *c, const float *a, const float *b,
                  const unsigned long int M, const unsigned long int N,

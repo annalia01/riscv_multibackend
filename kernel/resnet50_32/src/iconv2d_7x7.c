@@ -177,7 +177,7 @@ t0_1=f[0+(2*k+1)];
   i_slide_ptr_0 = i + n_ + 0 * (C + F - 1);
   i_slide_ptr_1 = i + n_ + 1 * (C + F - 1);
   i_slide_ptr_2 = i + n_ + 2 * (C + F - 1);
-//k=2, quindi manca l'ultimo slide moltiplicato per l'ultima colonna del filtro 
+
   // Main kernel, last iteration with filter coefficients reuse
   // Start loading next rows, from 4 to 6
   asm volatile("vmacc.vx v16, %0, v0" ::"r"(t6));

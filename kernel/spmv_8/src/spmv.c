@@ -35,17 +35,16 @@
 void spmv_csr_idx32_uint8(int32_t N_ROW, uint8_t *CSR_PROW, uint8_t *CSR_INDEX,
                     uint8_t *CSR_DATA, uint8_t *IN_VEC, uint8_t *OUT_VEC) {
 
-  // Pre-carica la riga 0
+
   uint8_t len   = CSR_PROW[1] - CSR_PROW[0];
   uint8_t *data  = CSR_DATA  + CSR_PROW[0];
   uint8_t *index= CSR_INDEX + CSR_PROW[0];
 
   for (int i = 0; i < N_ROW; ++i) {
-    // --- reset accumulatore ---
+
     asm volatile("vsetvli zero, %0, e8, m4, ta, ma" :: "r"(1));
     asm volatile("vmv.v.i v16, 0");
 
-    // --- loop vettoriale dinamico ---
     while (len > 0) {
       size_t vl;
       asm volatile("vsetvli %0, %1, e8, m4, ta, ma"
@@ -64,12 +63,10 @@ void spmv_csr_idx32_uint8(int32_t N_ROW, uint8_t *CSR_PROW, uint8_t *CSR_INDEX,
       len   -= vl;
     }
 
-    // --- store risultato riga corrente ---
     uint8_t tmp;
     asm volatile("vmv.x.s %0, v16" : "=r"(tmp));
     OUT_VEC[i] = (uint8_t)tmp;
 
-    // --- pre-carica riga successiva ---
     if (i + 1 < N_ROW) {
       len   = CSR_PROW[i + 2] - CSR_PROW[i + 1];
       data  = CSR_DATA  + CSR_PROW[i + 1];

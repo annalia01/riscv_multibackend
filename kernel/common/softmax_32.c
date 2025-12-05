@@ -151,13 +151,13 @@ void int32_to_float32_rvv(const int32_t *src, float *dst, int N)
     {
         size_t vl;
 
-        asm volatile("vsetvli %0, %1, e32, m4, ta, ma" : "=r"(vl) : "r"(remaining));
+        asm volatile("vsetvli %0, %1, e32, m8, ta, ma" : "=r"(vl) : "r"(remaining));
 
         asm volatile("vle32.v v0, (%0)" :: "r"(src));
 
-        asm volatile("vfcvt.f.x.v v4, v0");
+        asm volatile("vfcvt.f.x.v v8, v0");
 
-        asm volatile("vse32.v v4, (%0)" :: "r"(dst));
+        asm volatile("vse32.v v8, (%0)" :: "r"(dst));
 
         src += vl;
         dst += vl;

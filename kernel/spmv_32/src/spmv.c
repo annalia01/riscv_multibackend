@@ -35,13 +35,13 @@
 
 void spmv_csr_idx32(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
                     float *CSR_DATA, float *IN_VEC, float *OUT_VEC) {
-  // Pre-carica la riga 0
+
   int32_t len   = CSR_PROW[1] - CSR_PROW[0];
   float *data  = CSR_DATA  + CSR_PROW[0];
   int32_t *index= CSR_INDEX + CSR_PROW[0];
 
   for (int i = 0; i < N_ROW; ++i) {
-    // --- reset accumulatore ---
+
     asm volatile("vsetvli zero, %0, e32, m4, ta, ma" :: "r"(1));
     asm volatile("vmv.v.i v16, 0");
 
@@ -66,7 +66,6 @@ void spmv_csr_idx32(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
     asm volatile("vfmv.f.s %0, v16" : "=f"(tmp));
     OUT_VEC[i] = tmp;
 
-    // --- pre-carica riga successiva ---
     if (i + 1 < N_ROW) {
       len   = CSR_PROW[i + 2] - CSR_PROW[i + 1];
       data  = CSR_DATA  + CSR_PROW[i + 1];

@@ -73,7 +73,6 @@ void fmatmul_vec_4x4(float *c, const float *a, const float *b,
 
 
   for (unsigned long k = 0; k < N; k++) {
-    // Carica colonna k di A (4 elementi con stride N)
     asm volatile("vlse32.v v24, (%0), %1" :: "r"(a + k), "r"(stride_a));
 
     // Carica 4 scalari dalla riga k di B

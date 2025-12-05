@@ -1,4 +1,3 @@
-
 // Copyright 2020 ETH Zurich and University of Bologna.
 // SPDX-License-Identifier: Apache-2.0
 
@@ -10,9 +9,6 @@
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define ASSUME_ALIGNED_64(p) ((uint8_t*)__builtin_assume_aligned((p), 64))
 
-
-
-// --- Dispatcher --------------------------------------------------------------
 
 void fmatmul_uint8(uint8_t * __restrict c_,
              const uint8_t * __restrict a_,
@@ -27,10 +23,6 @@ void fmatmul_uint8(uint8_t * __restrict c_,
     fmatmul_4x4_uint8(c, a, b, M, N, P);
 
 }
-
-// ============================================================================
-// 4x4
-// ============================================================================
 
 void fmatmul_4x4_uint8(uint8_t *c, const uint8_t *a, const uint8_t *b,
                  const unsigned long int M, const unsigned long int N,
@@ -79,16 +71,14 @@ void fmatmul_vec_4x4_uint8(uint8_t *c, const uint8_t *a, const uint8_t *b,
 
 
   for (unsigned long k = 0; k < N; k++) {
-    // Carica colonna k di A (4 elementi con stride N)
+
     asm volatile("vlse8.v v24, (%0), %1" :: "r"(a + k), "r"(stride_a));
 
-    // Carica 4 scalari dalla riga k di B
     uint8_t b0 = b[k * P + 0];
     uint8_t b1 = b[k * P + 1];
     uint8_t b2 = b[k * P + 2];
     uint8_t b3 = b[k * P + 3];
 
-    // Outer product: colonna(A) × scalari di B
     asm volatile("vmacc.vx v0, %0, v24" :: "r"(b0));
     asm volatile("vmacc.vx v4, %0, v24" :: "r"(b1));
     asm volatile("vmacc.vx v8, %0, v24" :: "r"(b2));

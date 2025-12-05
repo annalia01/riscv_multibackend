@@ -83,7 +83,7 @@ int main() {
     printf("------------------------------------------------------------\n");
     printf("\n");
 
-   // Leggi i CSR prima dell’esecuzione
+
 #ifdef SPIKEGEM
 uint64_t start_minstret = read_minstret();
 #endif
@@ -92,18 +92,15 @@ start_timer();
 fmatmul_uint8(c, a, b, s, s, s);
 stop_timer();
 
-// Leggi i CSR dopo l’esecuzione
 #ifdef SPIKEGEM
 uint64_t end_minstret = read_minstret();
 uint64_t delta_minstret = end_minstret - start_minstret;
 #endif
 
-
 int64_t runtime = get_timer();
 float performance = 2.0 * s * s * s / runtime;
 float utilization = 100 * performance / (2.0 * NR_LANES);
 
-// Stampa risultati
 printf("The execution took %ld cycles (timer).\n", runtime);
 #ifdef SPIKEGEM
 printf("Instructions retired (CSR minstret): %lu\n", delta_minstret);

@@ -82,14 +82,12 @@ int main() {
   spmv_csr_idx32_uint8(R, CSR_PROW, CSR_INDEX, CSR_DATA, CSR_IN_VECTOR,
                  CSR_OUT_VECTOR);
   stop_timer();
-// Leggi i CSR dopo l’esecuzione
+
   #ifdef SPIKEGEM
   uint64_t end_minstret = read_minstret();
   uint64_t delta_minstret = end_minstret - start_minstret;
   #endif
 
-
-  // Metrics
   int64_t runtime = get_timer();
   float performance = 2.0 * NZ / runtime;
   float utilization = 100 * performance / (2.0 * NR_LANES);
